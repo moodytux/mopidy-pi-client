@@ -6,3 +6,5 @@ include mopidy_pi-client/ext.conf
 include tox.ini
 
 recursive-include tests *.py
+
+graft mopidy_pi-client/static
