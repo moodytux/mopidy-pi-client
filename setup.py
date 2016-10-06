@@ -30,7 +30,7 @@ setup(
     ],
     entry_points={
         'mopidy.ext': [
-            'pi-client = mopidy_pi-client:Extension',
+            'pi-client = mopidy_pi_client:Extension',
         ],
     },
     classifiers=[

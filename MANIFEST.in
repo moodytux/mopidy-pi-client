@@ -2,9 +2,9 @@ include .travis.yml
 include LICENSE
 include MANIFEST.in
 include README.rst
-include mopidy_pi-client/ext.conf
+include mopidy_pi_client/ext.conf
 include tox.ini
 
 recursive-include tests *.py
 
-graft mopidy_pi-client/static
+graft mopidy_pi_client/static
