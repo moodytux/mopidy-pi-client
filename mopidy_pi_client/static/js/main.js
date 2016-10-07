@@ -1,4 +1,4 @@
-var showTrackList = function showTrackList(tracks) {
+var showAlbumInfo = function showAlbumInfo(album, tracks) {
     if (tracks) {
         for (var i = 0; i < tracks.length; i++) {
             $("<a/>")
@@ -6,9 +6,12 @@ var showTrackList = function showTrackList(tracks) {
                 .appendTo($("#track-list"));
         }
 
-        // Show our track list screen, hide other screens.
+        // Set the album info.
+        $("#album-info .album-name").text(album.name);
+
+        // Show our album-info screen, hide other screens.
         $(".screen").hide();
-        $("#track-list").show();
+        $("#album-info").show();
     }
 }
 
@@ -17,7 +20,7 @@ var showAlbums = function showAlbums(albums) {
         for (var i = 0; i < albums.length; i++) {
             $("<a/>")
                 .text("Album: " + albums[i].name + ", artist: " + albums[i].artists[0])
-                .click(showScreen("track-list", { "uri": albums[i].uri) })
+                .click(showScreen("album-info", { "album": albums[i]) })
                 .appendTo($("#album-list"));
         }
 
@@ -31,9 +34,9 @@ var showScreen = function showScreen(screenName, params) {
     if (screenName == "album-list") {
         // Get the list of albums and show them.
         mopidy.library.getDistinct("album", "None").done(showAlbums);
-    } else if (screenName == "track-list") {
-        // Get the track list and show it.
-        mopidy.library.lookup("None", [ params.uri ]).done(showTrackList);
+    } else if (screenName == "album-info") {
+        // Get the track list and show it as part of the album info.
+        mopidy.library.lookup("None", [ params.album.uri ]).done(showAlbumInfo(params.album));
     }
 }
 
