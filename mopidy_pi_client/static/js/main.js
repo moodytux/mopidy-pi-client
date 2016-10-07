@@ -20,7 +20,7 @@ var showAlbums = function showAlbums(albums) {
         for (var i = 0; i < albums.length; i++) {
             $("<a/>")
                 .text("Album: " + albums[i].name + ", artist: " + albums[i].artists[0])
-                .click(showScreen("album-info", { "album": albums[i]) })
+                .click(showScreen("album-info", { "album": albums[i] } ))
                 .appendTo($("#album-list"));
         }
 
