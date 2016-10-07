@@ -56,4 +56,4 @@ $(function() {
         // Initially show the album list screen.
         showScreen("album-list", {});
     });
-}
+})
