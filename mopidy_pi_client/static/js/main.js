@@ -42,7 +42,7 @@ var showScreen = function showScreen(screenName, params) {
 
 // JQuery document ready.
 $(function() {
-    var mopidy = new Mopidy();
+    mopidy = new Mopidy();
 
     // Log all events.
     mopidy.on(console.log.bind(console));
