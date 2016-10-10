@@ -49,7 +49,7 @@ var populateAlbumData = function(albumsRefs) {
 var showScreen = function showScreen(screenName, params) {
     if (screenName == "album-list") {
         // Fetch all the album data if we don't have it - the API provides no way of getting all album info in one go :(
-        if (albumData == null) {
+        if (albumData.length == 0) {
             mopidy.library.browse("local:directory?type=album").done(populateAlbumData);
         }
 
@@ -71,6 +71,9 @@ $(function() {
         // Show the online state.
         $("#offline").hide();
         $("#online").show();
+
+        // Initialise our album data with no albums.
+        albumData = [];
 
         // Initially show the album list screen.
         showScreen("album-list", {});
