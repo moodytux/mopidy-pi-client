@@ -1,4 +1,4 @@
-var showAlbumInfo = function showAlbumInfo(album, tracks) {
+var showAlbumInfo = function(album, tracks) {
     if (tracks) {
         for (var i = 0; i < tracks.length; i++) {
             $("<a/>")
@@ -15,7 +15,7 @@ var showAlbumInfo = function showAlbumInfo(album, tracks) {
     }
 }
 
-var showAlbums = function showAlbums(albums) {
+var showAlbums = function(albums) {
     if (albums) {
         for (var i = 0; i < albums.length; i++) {
             $("<a/>")
@@ -30,10 +30,29 @@ var showAlbums = function showAlbums(albums) {
     }
 }
 
+var populateAlbumData = function(albumsRefs) {
+    albumData = [];
+    if (albumRefs) {
+        // Loop through the album refs, getting data on each.
+        $.each(albumRefs, function(index, albumRef) {
+            // Request info on this album. Unfortunately the API only gives us access to album info through tracks :(
+            mopidy.library.lookup(null, albumRef.uri).then(function(tracksObj) {
+                var tracks = tracksObj[albumRef.uri];
+                if (tracks.length > 0) {
+                    console.log(tracks[0]);
+                }
+            });
+        });
+    }
+}
+
 var showScreen = function showScreen(screenName, params) {
     if (screenName == "album-list") {
-        // Get the list of albums and show them.
-        mopidy.library.getDistinct("album", "None").done(showAlbums);
+        // Fetch all the album data if we don't have it - the API provides no way of getting all album info in one go :(
+        if (albumData == null) {
+            mopidy.library.browse("local:directory?type=album").done(populateAlbumData);
+        }
+
     } else if (screenName == "album-info") {
         // Get the track list and show it as part of the album info.
         mopidy.library.lookup("None", [ params.album.uri ]).done(showAlbumInfo(params.album));
