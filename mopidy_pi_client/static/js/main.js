@@ -25,7 +25,7 @@ var renderAlbumInfo = function(tracks) {
     prettyLog("About to render the following tracks", tracks);
     if (tracks) {
         $.each(tracks, function(index, track) {
-            $("<div/>")
+            $("<li/>")
                 .text("Track no: " + track.track_no + ", track: " + track.name)
                 .appendTo($('#album-info .track-list'));
 
@@ -44,7 +44,7 @@ var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
     if (albums != null) {
         $.each(albums, function(index, album) {
-            $("<div/>")
+            $("<li/>")
                 .text("Album: " + album.name)
                 .click(function() {
                     showScreen("album-info", {albumUri: album.uri } );
@@ -128,10 +128,6 @@ $(function() {
 
     // Setup our listener for when we are online.
     mopidy.on("state:online", function() {
-        // Show the online state.
-        $("#offline").hide();
-        $("#online").show();
-
         // Show the album list as the default screen.
         showScreen("album-list");
     });
