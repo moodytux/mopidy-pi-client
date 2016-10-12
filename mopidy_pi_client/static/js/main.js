@@ -10,6 +10,10 @@ var showScreen = function(screenName, params) {
 
         albumDataPromise
             .done(renderAlbumList);
+
+        //todo
+        getImageUris()
+            .done();
     } else if (screenName == "album-info") {
         prettyLog("About to send the user to the album info screen, with URI", params.albumUri);
         var trackDataPromise = getAlbumTrackData()
@@ -74,8 +78,7 @@ var getAlbumTrackData = function() {
         prettyLog("Fetching album track data");
         albumTrackData = [];
 
-        // The API provides no way of getting all album info in one go :(
-        return mopidy.library.browse("local:directory?type=album")
+        return getAlbumUris()
             .then(lookupAlbumUris)
             .then(function(data) {
                 albumTrackData = data;
@@ -89,25 +92,55 @@ var getAlbumTrackData = function() {
 }
 
 //todo
-var getImages = function(uri, callback) {
-    mopidy.library.getImages([uri])
-        .then(function(result) {
-            return result["uri"];
-        })
-        .done(callback);
+var getImageUris = function() {
+    // If we need to, first fetch the album image URIs.
+    if (typeof albumImageUris === 'undefined') {
+        prettyLog("Fetching image URIs");
+        albumImageUris = {};
+
+        return getAlbumUris()
+            .then(mopidy.library.getImages)
+            .then(function(images) {
+                $.each(images, function(index, image) {
+                    prettyLog("", index);
+                    prettyLog("", image);
+                });
+                prettyLog("", images);
+            });
+    } else {
+        // Return a promise with the data.
+        prettyLog("Already got image URIs");
+        return Mopidy.when(albumImageUris);
+    }
 }
 
-var lookupAlbumUris = function(albumRefs) {
-    var albumRefUris = [];
-    if (albumRefs) {
-        // Loop through the album refs, storing the uri for each.
-        $.each(albumRefs, function(index, albumRef) {
-            albumRefUris.push(albumRef.uri);
-        });
+// Returns a promise with album URIs.
+var getAlbumUris = function() {
+    // If we need to, fetch the album refs.
+    if (typeof albumUris === 'undefined') {
+        albumUris = [];
+        return mopidy.library.browse("local:directory?type=album")
+            .then(function(albumRefs) {
+                if (albumRefs) {
+                    // Loop through the album refs, storing the uri for each.
+                    $.each(albumRefs, function(index, albumRef) {
+                        albumUris.push(albumRef.uri);
+                    });
+                }
+                return albumUris;
+            });
+    } else {
+        // Return a promise with the data.
+        prettyLog("Already got album URIs");
+        return Mopidy.when(albumUris);
     }
+}
+
+var lookupAlbumUris = function(albumUris) {
+    prettyLog("About to lookup album URIs", albumUris);
 
     // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
-    return mopidy.library.lookup(null, albumRefUris);
+    return mopidy.library.lookup(null, albumUris);
 }
 
 var parseAlbumData = function(albumTrackData) {
