@@ -84,7 +84,7 @@ var getAlbumTrackData = function() {
     } else {
         // Return a promise with the data.
         prettyLog("Already got data");
-        return when(albumTrackData);
+        return Mopidy.when(albumTrackData);
     }
 }
 
