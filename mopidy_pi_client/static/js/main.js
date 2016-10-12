@@ -5,15 +5,20 @@
 var showScreen = function(screenName, params) {
     if (screenName == 'album-list') {
         prettyLog("About to send the user to the album list screen");
-        getAlbumTrackData(function(albumTrackData) {
-            // Parse the album list from the data and finally render the album list.
-            renderAlbumList(parseAlbumData(albumTrackData));
-        });
+        var albumDataPromise = getAlbumTrackData()
+            .then(parseAlbumData);
+
+        albumDataPromise
+            .done(renderAlbumList);
     } else if (screenName == "album-info") {
         prettyLog("About to send the user to the album info screen, with URI", params.albumUri);
-        getAlbumTrackData(function(albumTrackData) {
-            renderAlbumInfo(albumTrackData[params.albumUri]);
-        });
+        var trackDataPromise = getAlbumTrackData()
+            .then(function(albumTrackData) {
+                return albumTrackData[params.albumUri];
+            });
+
+        trackDataPromise
+            .done(renderAlbumInfo);
     }
 }
 
@@ -62,25 +67,34 @@ var renderAlbumList = function(albums) {
  * Domain based data manipulation methods.
  */
 
-var getAlbumTrackData = function(callback) {
+// Returns a promise with albumTrackData.
+var getAlbumTrackData = function() {
     // If we need to, first fetch the album track data.
     if (typeof albumTrackData === 'undefined') {
         prettyLog("Fetching album track data");
         albumTrackData = [];
 
         // The API provides no way of getting all album info in one go :(
-        mopidy.library.browse("local:directory?type=album")
+        return mopidy.library.browse("local:directory?type=album")
             .then(lookupAlbumUris)
             .then(function(data) {
                 albumTrackData = data;
                 return albumTrackData;
-            })
-            .done(callback);
+            });
     } else {
-        // Parse the album list from the data and finally render the album list.
+        // Return a promise with the data.
         prettyLog("Already got data");
-        callback(albumTrackData);
+        return when(albumTrackData);
     }
+}
+
+//todo
+var getImages = function(uri, callback) {
+    mopidy.library.getImages([uri])
+        .then(function(result) {
+            return result["uri"];
+        })
+        .done(callback);
 }
 
 var lookupAlbumUris = function(albumRefs) {
