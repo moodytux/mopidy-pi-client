@@ -5,23 +5,16 @@
 var showScreen = function(screenName, params) {
     if (screenName == 'album-list') {
         prettyLog("About to send the user to the album list screen");
-        var albumDataPromise = getAlbumTrackData()
-            .then(parseAlbumData);
-
-        albumDataPromise
+        getAlbumTrackData()
+            .then(parseAlbumData)
             .done(renderAlbumList);
 
-        //todo
-        getImageUris()
-            .done();
     } else if (screenName == "album-info") {
         prettyLog("About to send the user to the album info screen, with URI", params.albumUri);
-        var trackDataPromise = getAlbumTrackData()
+        getAlbumTrackData()
             .then(function(albumTrackData) {
                 return albumTrackData[params.albumUri];
-            });
-
-        trackDataPromise
+            })
             .done(renderAlbumInfo);
     }
 }
@@ -38,6 +31,10 @@ var renderAlbumInfo = function(tracks) {
                 .text("Track no: " + track.track_no + ", track: " + track.name)
                 .appendTo($('#album-info .track-list'));
 
+            $("#album-info .play").click(function() {
+                playAlbum(tracks);
+            });
+
             // Set the album info.
             $("#album-info .album-name").text(track.album.name);
         });
@@ -53,12 +50,20 @@ var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
     if (albums != null) {
         $.each(albums, function(index, album) {
-            $("<li/>")
-                .text("Album: " + album.name)
-                .click(function() {
-                    showScreen("album-info", {albumUri: album.uri } );
-                })
-                .appendTo($("#album-list"));
+            if (album.images.length > 0) {
+                $("<img/>")
+                    .addClass("cover")
+                    .attr("src", album.images[0])
+                    .click(function() {
+                        showScreen("album-info", {albumUri: album.uri } );
+                    })
+                    .appendTo($("#album-list"));
+            }
+        });
+
+        // Render as coverflow.
+        $(function() {
+            $(".coverflow").coverflow();
         });
 
         // Show our album list screen, hide other screens.
@@ -91,29 +96,6 @@ var getAlbumTrackData = function() {
     }
 }
 
-//todo
-var getImageUris = function() {
-    // If we need to, first fetch the album image URIs.
-    if (typeof albumImageUris === 'undefined') {
-        prettyLog("Fetching image URIs");
-        albumImageUris = {};
-
-        return getAlbumUris()
-            .then(mopidy.library.getImages)
-            .then(function(images) {
-                $.each(images, function(index, image) {
-                    prettyLog("", index);
-                    prettyLog("", image);
-                });
-                prettyLog("", images);
-            });
-    } else {
-        // Return a promise with the data.
-        prettyLog("Already got image URIs");
-        return Mopidy.when(albumImageUris);
-    }
-}
-
 // Returns a promise with album URIs.
 var getAlbumUris = function() {
     // If we need to, fetch the album refs.
@@ -141,6 +123,10 @@ var lookupAlbumUris = function(albumUris) {
 
     // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
     return mopidy.library.lookup(null, albumUris);
+}
+
+var playAlbum = function(tracks) {
+    prettyLog("About to play album");
 }
 
 var parseAlbumData = function(albumTrackData) {
