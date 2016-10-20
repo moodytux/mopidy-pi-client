@@ -25,24 +25,54 @@ var showScreen = function(screenName, params) {
 
 var renderAlbumInfo = function(tracks) {
     prettyLog("About to render the following tracks", tracks);
-    if (tracks) {
+    if (tracks && (tracks.length > 0)) {
         $.each(tracks, function(index, track) {
             $("<li/>")
-                .text("Track no: " + track.track_no + ", track: " + track.name)
+                .text(track.track_no + ". " + track.name)
+                .click(function() {
+                    playTracks(tracks.slice(index));
+                })
                 .appendTo($('#album-info .track-list'));
-
-            $("#album-info .play").click(function() {
-                playAlbum(tracks);
-            });
-
-            // Set the album info.
-            $("#album-info .album-name").text(track.album.name);
         });
 
+        // Set the album info.
+        var album = tracks[0].album;
+        if (album.images && (album.images.length > 0)) {
+            $("#album-info .album-image").attr("src", tracks[0].album.images[0]);
+        }
+        $("#album-info .album-name").text(tracks[0].album.name);
+        $("#album-info .play-album").click(function() {
+            $("#album-info .previous").show();
+            $("#album-info .next").show();
+            $("#album-info .pause").show();
+            playTracks(tracks);
+        });
+        $("#album-info .play").click(play);
+        $("#album-info .pause").click(pause);
+        $("#album-info .previous").click(playPrevious);
+        $("#album-info .next").click(playNext);
 
         // Show our album-info screen, hide other screens.
         $(".screen").hide();
         $("#album-info").show();
+
+        mopidy.on("event:trackPlaybackStarted", function(tlTrack) {
+            $("#album-info .play").hide();
+            $("#album-info .pause").show();
+
+            // Find the track in the view and set it to playing.
+        });
+        mopidy.on("event:trackPlaybackResumed", function(tlTrack) {
+            $("#album-info .play").hide();
+            $("#album-info .pause").show();
+        });
+        mopidy.on("event:trackPlaybackPaused", function(tlTrack) {
+            $("#album-info .play").show();
+            $("#album-info .pause").hide();
+        });
+        mopidy.on("event:trackPlaybackEnded", function(tlTrack) {
+            // Find the track in the view and set it to playing.
+        });
     }
 }
 
@@ -125,8 +155,36 @@ var lookupAlbumUris = function(albumUris) {
     return mopidy.library.lookup(null, albumUris);
 }
 
-var playAlbum = function(tracks) {
-    prettyLog("About to play album");
+var playTracks = function(tracks) {
+    prettyLog("About to add tracks to playlist and play first", tracks);
+    mopidy.tracklist.clear()
+        .then(function() {
+            return mopidy.tracklist.add(tracks);
+        })
+        .done(function(tlTracks) {
+            if (tlTracks && (tlTracks.length > 0)) {
+                mopidy.playback.play(tlTracks[0]);
+            }
+        });
+}
+
+var playPrevious = function() {
+    prettyLog("Play previous track");
+    mopidy.playback.previous();
+}
+
+var playNext = function() {
+    prettyLog("Play next track");
+    mopidy.playback.next();
+}
+
+var play = function() {
+    mopidy.playback.play();
+}
+
+var pause = function() {
+    prettyLog("Pausing current track");
+    mopidy.playback.pause();
 }
 
 var parseAlbumData = function(albumTrackData) {
