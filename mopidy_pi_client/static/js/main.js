@@ -37,7 +37,7 @@ var renderAlbumInfo = function(tracks) {
 
         // Set the album info.
         var album = tracks[0].album;
-        if (album.images && (album.images.length > 0)) {
+        if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
             $("#album-info .album-image").attr("src", tracks[0].album.images[0]);
         }
         $("#album-info .album-name").text(tracks[0].album.name);
@@ -80,7 +80,7 @@ var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
     if (albums != null) {
         $.each(albums, function(index, album) {
-            if (album.images.length > 0) {
+            if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
                 $("<img/>")
                     .addClass("cover")
                     .attr("src", album.images[0])
