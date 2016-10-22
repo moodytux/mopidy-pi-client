@@ -3,7 +3,11 @@
  */
 
 var showScreen = function(screenName, params) {
-    if (screenName == 'album-list') {
+    if (screenName == 'loading') {
+        prettyLog("About to show the loading screen");
+        $(".screen").hide();
+        $("#loading").show();
+    } else if (screenName == 'album-list') {
         prettyLog("About to send the user to the album list screen");
         getAlbumTrackData()
             .then(parseAlbumData)
@@ -25,6 +29,7 @@ var showScreen = function(screenName, params) {
 
 var renderAlbumInfo = function(tracks) {
     prettyLog("About to render the following tracks", tracks);
+    $('#album-info .track-list').empty();
     if (tracks && (tracks.length > 0)) {
         $.each(tracks, function(index, track) {
             $("<li/>")
@@ -51,6 +56,9 @@ var renderAlbumInfo = function(tracks) {
         $("#album-info .pause").click(pause);
         $("#album-info .previous").click(playPrevious);
         $("#album-info .next").click(playNext);
+        $("#album-info .back").click(function() {
+            showScreen("album-list");
+        });
 
         // Show our album-info screen, hide other screens.
         $(".screen").hide();
@@ -78,6 +86,7 @@ var renderAlbumInfo = function(tracks) {
 
 var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
+    $('#album-list').empty();
     if (albums != null) {
         $.each(albums, function(index, album) {
             if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
@@ -212,6 +221,9 @@ var prettyLog = function(message, obj) {
  * JQuery document ready, where things start.
  */
 $(function() {
+    // Show the loading screen.
+    showScreen("offline");
+
     mopidy = new Mopidy();
 
     // Log all events.
@@ -219,7 +231,10 @@ $(function() {
 
     // Setup our listener for when we are online.
     mopidy.on("state:online", function() {
-        // Show the album list as the default screen.
+        // Show the loading screen initially.
+        showScreen("loading");
+
+        // Show the album list which may take some time.
         showScreen("album-list");
     });
 })

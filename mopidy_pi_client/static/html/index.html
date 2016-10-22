@@ -9,22 +9,37 @@
     <link href="/pi-client/css/main.css" rel="stylesheet">
   </head>
   <body>
-    <section id="offline" class="screen">
+    <section id="offline" class="screen" style="display: none">
       <div>You are currently offline...</div>
     </section>
 
-    <section id="album-list" class="screen hidden coverflow">
+    <section id="loading" class="screen" style="display: none">
+      <div>Loading...</div>
     </section>
 
-    <section id="album-info" class="screen hidden">
-      <a class="play-album">Play album</a>
-      <a class="play hidden">Play</a>
-      <a class="pause hidden">Pause</a>
-      <a class="previous hidden">Previous</a>
-      <a class="next hidden">Next</a>
-      <h1 class="album-name"></h1>
-      <img class="album-image"></img>
-      <ul class="track-list"></ul>
+    <section id="album-list" class="screen coverflow" style="display: none">
+    </section>
+
+    <section id="album-info" class="screen" style="display: none">
+      <div class="row">
+        <div class="col-sm-6">
+          <h1 class="album-name"></h1>
+          <img class="album-image"></img>
+        </div>
+        <div class="col-sm-6">
+          <div>
+            <ul class="track-list"></ul>
+          </div>
+          <div>
+            <a class="play-album">Play album</a>
+            <a class="play hidden">Play</a>
+            <a class="pause hidden">Pause</a>
+            <a class="previous hidden">Previous</a>
+            <a class="next hidden">Next</a>
+            <a class="back">Back</a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <script type="text/javascript" src="/pi-client/js/jquery-3.1.1.js"></script>
