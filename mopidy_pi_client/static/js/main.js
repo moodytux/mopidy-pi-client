@@ -32,7 +32,8 @@ var renderAlbumInfo = function(tracks) {
     $('#album-info .track-list').empty();
     if (tracks && (tracks.length > 0)) {
         $.each(tracks, function(index, track) {
-            $("<li/>")
+            $("<a/>")
+                .addClass("list-group-item")
                 .text(track.track_no + ". " + track.name)
                 .click(function() {
                     playTracks(tracks.slice(index));
@@ -43,7 +44,8 @@ var renderAlbumInfo = function(tracks) {
         // Set the album info.
         var album = tracks[0].album;
         if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
-            $("#album-info .album-image").attr("src", tracks[0].album.images[0]);
+            $("#album-info .album-image")
+                .attr("src", tracks[0].album.images[0]);
         }
         $("#album-info .album-name").text(tracks[0].album.name);
         $("#album-info .play-album").click(function() {
@@ -86,7 +88,7 @@ var renderAlbumInfo = function(tracks) {
 
 var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
-    $('#album-list').empty();
+    $('#album-list div.artwork').empty();
     if (albums != null) {
         $.each(albums, function(index, album) {
             if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
@@ -96,7 +98,7 @@ var renderAlbumList = function(albums) {
                     .click(function() {
                         showScreen("album-info", {albumUri: album.uri } );
                     })
-                    .appendTo($("#album-list"));
+                    .appendTo($("#album-list .artwork"));
             }
         });
 

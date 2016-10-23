@@ -1,0 +1,18 @@
+section {
+  margin: 20px;
+}
+
+section#loading div.message {
+  text-align: center;
+  width: 100%;
+}
+
+section#album-info img.album-image {
+  display: block;
+  margin: 10%;
+  width: 80%;
+}
+
+section#album-list img.cover {
+  width: 40%;
+}
