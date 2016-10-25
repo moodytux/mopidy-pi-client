@@ -159,9 +159,9 @@ var renderControls = function(state, tlTrack, tracks) {
             next.addClass("enabled");
         }
 
-        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+        $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
         if (trackNo != null) {
-            $("#album-info .tracklist .track-" + trackNo).addClass("playing");
+            $("#album-info .track-list .track-" + trackNo).addClass("playing");
         }
     } else if (state == ControlsState.PAUSED) {
         $("#album-info .play").show();
@@ -175,9 +175,9 @@ var renderControls = function(state, tlTrack, tracks) {
             next.addClass("enabled");
         }
 
-        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+        $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
         if (trackNo != null) {
-            $("#album-info .tracklist .track-" + trackNo).addClass("paused");
+            $("#album-info .track-list .track-" + trackNo).addClass("paused");
         }
     }
 }

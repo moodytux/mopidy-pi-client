@@ -25,11 +25,11 @@ section#album-info .track-list a.paused {
   color: red;
 }
 
-section#album-info .controls .enabled {
+section#album-info .controls a.enabled {
   color: blue;
 }
 
-section#album-info .controls {
+section#album-info .controls a {
   color: red;
 }
 
