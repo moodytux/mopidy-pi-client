@@ -29,21 +29,27 @@
     <section id="album-info" class="screen" style="display: none">
       <div class="row">
         <div class="col-sm-6">
+          <a class="play-album">Play album</a>
           <img class="album-image"></img>
+          <div class="row controls">
+            <div class="col-sm-3">
+              <a class="play" style="display: none">Play</a>
+              <a class="pause" style="display: none">Pause</a>
+            </div>
+            <div class="col-sm-3">
+              <a class="previous">Previous</a>
+            </div>
+            <div class="col-sm-3">
+              <a class="next">Next</a>
+            </div>
+            <div class="col-sm-3">
+              <a class="back">Back</a>
+            </div>
+          </div>
         </div>
         <div class="col-sm-6">
-          <div>
-            <h1 class="album-name"></h1>
-            <div class="list-group track-list"></div>
-          </div>
-          <div>
-            <a class="play-album">Play album</a>
-            <a class="play" style="display: none">Play</a>
-            <a class="pause" style="display: none">Pause</a>
-            <a class="previous" style="display: none">Previous</a>
-            <a class="next" style="display: none">Next</a>
-            <a class="back">Back</a>
-          </div>
+          <h1 class="album-name"></h1>
+          <div class="list-group track-list"></div>
         </div>
       </div>
     </section>

@@ -1,3 +1,10 @@
+var ControlsState = {
+  NOT_STARTED: "NOT_STARTED",
+  PLAY_FINISHED: "PLAY_FINISHED",
+  PLAYING: "PLAYING",
+  PAUSED: "PAUSED",
+};
+
 /*
  * Controller related methods to show screens.
  */
@@ -34,6 +41,8 @@ var renderAlbumInfo = function(tracks) {
         $.each(tracks, function(index, track) {
             $("<a/>")
                 .addClass("list-group-item")
+                .addClass("track")
+                .addClass("track-" + track.track_no)
                 .text(track.track_no + ". " + track.name)
                 .click(function() {
                     playTracks(tracks.slice(index));
@@ -49,11 +58,10 @@ var renderAlbumInfo = function(tracks) {
         }
         $("#album-info .album-name").text(tracks[0].album.name);
         $("#album-info .play-album").click(function() {
-            $("#album-info .previous").show();
-            $("#album-info .next").show();
-            $("#album-info .pause").show();
             playTracks(tracks);
         });
+
+        // Set up the controls click listeners.
         $("#album-info .play").click(play);
         $("#album-info .pause").click(pause);
         $("#album-info .previous").click(playPrevious);
@@ -61,27 +69,24 @@ var renderAlbumInfo = function(tracks) {
         $("#album-info .back").click(function() {
             showScreen("album-list");
         });
+        renderControls(ControlsState.NOT_STARTED, null, tracks);
 
         // Show our album-info screen, hide other screens.
         $(".screen").hide();
         $("#album-info").show();
 
+        // Change our controls based on the playback state.
         mopidy.on("event:trackPlaybackStarted", function(tlTrack) {
-            $("#album-info .play").hide();
-            $("#album-info .pause").show();
-
-            // Find the track in the view and set it to playing.
+            renderControls(ControlsState.PLAYING, tlTrack, tracks);
         });
         mopidy.on("event:trackPlaybackResumed", function(tlTrack) {
-            $("#album-info .play").hide();
-            $("#album-info .pause").show();
+            renderControls(ControlsState.PLAYING, tlTrack, tracks);
         });
         mopidy.on("event:trackPlaybackPaused", function(tlTrack) {
-            $("#album-info .play").show();
-            $("#album-info .pause").hide();
+            renderControls(ControlsState.PAUSED, tlTrack, tracks);
         });
         mopidy.on("event:trackPlaybackEnded", function(tlTrack) {
-            // Find the track in the view and set it to playing.
+            renderControls(ControlsState.PLAY_FINISHED, tlTrack, tracks);
         });
     }
 }
@@ -110,6 +115,70 @@ var renderAlbumList = function(albums) {
         // Show our album list screen, hide other screens.
         $(".screen").hide();
         $("#album-list").show();
+    }
+}
+
+var renderControls = function(state, tlTrack, tracks) {
+    prettyLog("About to render the controls with state " + state + " for track", tlTrack);
+
+    var trackNo = null;
+    var isFirstTrack = false;
+    var isLastTrack = false;
+    if ((tlTrack != null) && (tlTrack.tl_track != null) && (tlTrack.tl_track.track != null)) {
+        trackNo = tlTrack.tl_track.track.track_no;
+        if (trackNo == 1) {
+            isFirstTrack = true;
+        } else if (trackNo == tracks.length) {
+            isLastTrack = true;
+        }
+    }
+
+    if (state == ControlsState.NOT_STARTED) {
+        $("#album-info .play").show();
+        $("#album-info .pause").hide();
+        $("#album-info .previous").removeClass("enabled");
+        $("#album-info .next").removeClass("enabled");
+
+        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+    } else if (state == ControlsState.PLAY_FINISHED) {
+        $("#album-info .play").show();
+        $("#album-info .pause").hide();
+        $("#album-info .previous").removeClass("enabled");
+        $("#album-info .next").removeClass("enabled");
+
+        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+    } else if (state == ControlsState.PLAYING) {
+        $("#album-info .play").hide();
+        $("#album-info .pause").show();
+        var previous = $("#album-info .previous").removeClass("enabled");
+        if (isFirstTrack == false) {
+            previous.addClass("enabled");
+        }
+        var next = $("#album-info .next").removeClass("enabled");
+        if (isLastTrack == false) {
+            next.addClass("enabled");
+        }
+
+        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+        if (trackNo != null) {
+            $("#album-info .tracklist .track-" + trackNo).addClass("playing");
+        }
+    } else if (state == ControlsState.PAUSED) {
+        $("#album-info .play").show();
+        $("#album-info .pause").hide();
+        var previous = $("#album-info .previous").removeClass("enabled");
+        if (isFirstTrack == false) {
+            previous.addClass("enabled");
+        }
+        var next = $("#album-info .next").removeClass("enabled");
+        if (isLastTrack == false) {
+            next.addClass("enabled");
+        }
+
+        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
+        if (trackNo != null) {
+            $("#album-info .tracklist .track-" + trackNo).addClass("paused");
+        }
     }
 }
 

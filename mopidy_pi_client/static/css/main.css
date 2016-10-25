@@ -13,6 +13,26 @@ section#album-info img.album-image {
   width: 80%;
 }
 
+section#album-info .track-list {
+  overflow: hidden;
+}
+
+section#album-info .track-list a.playing {
+  color: blue;
+}
+
+section#album-info .track-list a.paused {
+  color: red;
+}
+
+section#album-info .controls .enabled {
+  color: blue;
+}
+
+section#album-info .controls {
+  color: red;
+}
+
 section#album-list img.cover {
   width: 40%;
 }
