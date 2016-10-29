@@ -54,11 +54,11 @@ var renderAlbumInfo = function(tracks) {
         // Set the album info.
         var album = tracks[0].album;
         if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
-            $("#album-info .album-image")
+            $("#album-info .album-image img")
                 .attr("src", tracks[0].album.images[0]);
         }
         $("#album-info .album-name").text(tracks[0].album.name);
-        $("#album-info .play-album").click(function() {
+        $("#album-info .album-image .play-album-control").click(function() {
             playTracks(tracks);
         });
 

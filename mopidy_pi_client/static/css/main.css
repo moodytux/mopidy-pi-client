@@ -47,18 +47,23 @@ section#album-list .cover-item img.cover {
  * Album info screen
  */
 
-section#album-info img.album-image {
-  display: block;
-  margin: 0 10% 5% 10%;
-  width: 80%;
+section#album-info .album-image {
 }
 
-section#album-info img.album-image .play-album-control {
+section#album-info .album-image img {
+  width: 80%;
+  margin: 0 10% 5% 10%;
+}
+
+section#album-info .album-image .play-album-control {
+  position: absolute;
+  top: 45%;
+  left: 50%;
   width: 0px;
   height: 0px;
-  border-top: 8px solid transparent;
-  border-left: 12px solid #000;
-  border-bottom: 8px solid transparent;
+  border-top: 20px solid transparent;
+  border-left: 30px solid #aaa;
+  border-bottom: 20px solid transparent;
 }
 
 section#album-info .track-list {
