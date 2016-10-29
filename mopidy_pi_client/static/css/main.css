@@ -1,11 +1,51 @@
+/*
+ * General
+ */
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
 section {
-  margin: 20px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #f2f2f2;
+}
+
+/*
+ * Loading screen
+ */
+
+section#loading div.padding {
+  height: 50%;
 }
 
 section#loading div.message {
+  width: 100%;
   text-align: center;
+  font-size: 10pt;
+}
+
+/*
+ * Album list screen
+ */
+
+section#album-list .cover-item {
+  width: 40%;
+}
+
+section#album-list .cover-item img.cover {
   width: 100%;
 }
+
+/*
+ * Album info screen
+ */
 
 section#album-info img.album-image {
   display: block;
@@ -13,26 +53,103 @@ section#album-info img.album-image {
   width: 80%;
 }
 
+section#album-info img.album-image .play-album-control {
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-left: 12px solid #000;
+  border-bottom: 8px solid transparent;
+}
+
 section#album-info .track-list {
-  overflow: hidden;
+  height: 90%;
+  overflow-y: auto;
 }
 
-section#album-info .track-list a.playing {
-  color: blue;
+section#album-info .track-list .title {
+  padding-left: 20px;
 }
 
+section#album-info .track-list a.playing, 
 section#album-info .track-list a.paused {
-  color: red;
+  background-color: #ddd;
 }
 
-section#album-info .controls a.enabled {
-  color: blue;
+section#album-info .track-list a.playing .indicator {
+  float: left;
+  width: 0px;
+  height: 0px;
+  margin-top: 6px;
+  border-top: 5px solid transparent;
+  border-left: 7px solid #000;
+  border-bottom: 5px solid transparent;
+}
+
+section#album-info .track-list a.paused .indicator {
+  float: left;
+  width: 8px;
+  height: 9px;
+  margin-top: 6px;
+  border-left: 3px solid #000;
+  border-right: 3px solid #000;
+}
+
+section#album-info .controls {
+  margin: 0 10% 0 10%;
 }
 
 section#album-info .controls a {
-  color: red;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-section#album-list img.cover {
-  width: 40%;
+section#album-info .controls .play {
+  width: 0px;
+  height: 0px;
+  border-top: 8px solid transparent;
+  border-left: 12px solid #ddd;
+  border-bottom: 8px solid transparent;
 }
+
+section#album-info .controls .play.enabled {
+  border-color: transparent #000 transparent;
+}
+
+section#album-info .controls .pause {
+  width: 12px;
+  height: 16px;
+  border-left: 4px solid #ddd;
+  border-right: 4px solid #ddd;
+}
+
+section#album-info .controls .pause.enabled {
+  border-color: transparent #000 transparent #000;
+}
+
+section#album-info .controls .next {
+  width: 0px;
+  height: 0px;
+  border-right: 4px solid #ddd;
+  border-top: 8px solid transparent;
+  border-left: 12px solid #ddd;
+  border-bottom: 8px solid transparent;
+}
+
+section#album-info .controls .next.enabled {
+  border-color: transparent #000 transparent #000;
+}
+
+section#album-info .controls .previous {
+  width: 0px;
+  height: 0px;
+  border-left: 4px solid #ddd;
+  border-top: 8px solid transparent;
+  border-right: 12px solid #ddd;
+  border-bottom: 8px solid transparent;
+}
+
+section#album-info .controls .previous.enabled {
+  border-color: transparent #000 transparent #000;
+}
+

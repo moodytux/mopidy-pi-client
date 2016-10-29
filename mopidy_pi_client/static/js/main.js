@@ -43,10 +43,11 @@ var renderAlbumInfo = function(tracks) {
                 .addClass("list-group-item")
                 .addClass("track")
                 .addClass("track-" + track.track_no)
-                .text(track.track_no + ". " + track.name)
                 .click(function() {
                     playTracks(tracks.slice(index));
                 })
+                .append("<div class='indicator' />")
+                .append("<div class='title'>" + track.track_no + ". " + track.name + "</div>")
                 .appendTo($('#album-info .track-list'));
         });
 
@@ -61,14 +62,6 @@ var renderAlbumInfo = function(tracks) {
             playTracks(tracks);
         });
 
-        // Set up the controls click listeners.
-        $("#album-info .play").click(play);
-        $("#album-info .pause").click(pause);
-        $("#album-info .previous").click(playPrevious);
-        $("#album-info .next").click(playNext);
-        $("#album-info .back").click(function() {
-            showScreen("album-list");
-        });
         renderControls(ControlsState.NOT_STARTED, null, tracks);
 
         // Show our album-info screen, hide other screens.
@@ -76,15 +69,19 @@ var renderAlbumInfo = function(tracks) {
         $("#album-info").show();
 
         // Change our controls based on the playback state.
+        mopidy.off("event:trackPlaybackStarted");
         mopidy.on("event:trackPlaybackStarted", function(tlTrack) {
             renderControls(ControlsState.PLAYING, tlTrack, tracks);
         });
+        mopidy.off("event:trackPlaybackResumed");
         mopidy.on("event:trackPlaybackResumed", function(tlTrack) {
             renderControls(ControlsState.PLAYING, tlTrack, tracks);
         });
+        mopidy.off("event:trackPlaybackPaused");
         mopidy.on("event:trackPlaybackPaused", function(tlTrack) {
             renderControls(ControlsState.PAUSED, tlTrack, tracks);
         });
+        mopidy.off("event:trackPlaybackEnded");
         mopidy.on("event:trackPlaybackEnded", function(tlTrack) {
             renderControls(ControlsState.PLAY_FINISHED, tlTrack, tracks);
         });
@@ -97,13 +94,17 @@ var renderAlbumList = function(albums) {
     if (albums != null) {
         $.each(albums, function(index, album) {
             if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
+                var itemDiv = $("<div class='cover-item' />")
+                    .text(album.name)
+                    .appendTo($("#album-list .artwork"));
+
                 $("<img/>")
                     .addClass("cover")
                     .attr("src", album.images[0])
                     .click(function() {
                         showScreen("album-info", {albumUri: album.uri } );
                     })
-                    .appendTo($("#album-list .artwork"));
+                    .appendTo(itemDiv);
             }
         });
 
@@ -121,6 +122,37 @@ var renderAlbumList = function(albums) {
 var renderControls = function(state, tlTrack, tracks) {
     prettyLog("About to render the controls with state " + state + " for track", tlTrack);
 
+    if (typeof initialisedClickListeners === "undefined") {
+        // Set up the controls click listeners.
+        $("#album-info .play").click(function() {
+            if ($(this).hasClass("enabled")) {
+                play();
+            }
+        });
+        $("#album-info .pause").click(function() {
+            if ($(this).hasClass("enabled")) {
+                pause();
+            }
+        });
+        $("#album-info .previous").click(function() {
+            if ($(this).hasClass("enabled")) {
+                playPrevious();
+            }
+        });
+        $("#album-info .next").click(function() {
+            if ($(this).hasClass("enabled")) {
+                playNext();
+            }
+        });
+        $("#album-info .back").click(function() {
+            stop();
+            showScreen("album-list");
+        });
+
+        // Flag that we are all setup with click listeners.
+        initialisedClickListeners = true;
+    }
+
     var trackNo = null;
     var isFirstTrack = false;
     var isLastTrack = false;
@@ -133,23 +165,22 @@ var renderControls = function(state, tlTrack, tracks) {
         }
     }
 
+    // Reset the state to disabled.
+    $("#album-info .play").removeClass("enabled");
+    $("#album-info .pause").removeClass("enabled");
+    $("#album-info .previous").removeClass("enabled");
+    $("#album-info .next").removeClass("enabled");
+    $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
+
     if (state == ControlsState.NOT_STARTED) {
         $("#album-info .play").show();
         $("#album-info .pause").hide();
-        $("#album-info .previous").removeClass("enabled");
-        $("#album-info .next").removeClass("enabled");
-
-        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
     } else if (state == ControlsState.PLAY_FINISHED) {
         $("#album-info .play").show();
         $("#album-info .pause").hide();
-        $("#album-info .previous").removeClass("enabled");
-        $("#album-info .next").removeClass("enabled");
-
-        $("#album-info .tracklist .track").removeClass("playing").removeClass("paused");
     } else if (state == ControlsState.PLAYING) {
         $("#album-info .play").hide();
-        $("#album-info .pause").show();
+        $("#album-info .pause").addClass("enabled").show();
         var previous = $("#album-info .previous").removeClass("enabled");
         if (isFirstTrack == false) {
             previous.addClass("enabled");
@@ -159,12 +190,11 @@ var renderControls = function(state, tlTrack, tracks) {
             next.addClass("enabled");
         }
 
-        $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
         if (trackNo != null) {
             $("#album-info .track-list .track-" + trackNo).addClass("playing");
         }
     } else if (state == ControlsState.PAUSED) {
-        $("#album-info .play").show();
+        $("#album-info .play").addClass("enabled").show();
         $("#album-info .pause").hide();
         var previous = $("#album-info .previous").removeClass("enabled");
         if (isFirstTrack == false) {
@@ -175,7 +205,6 @@ var renderControls = function(state, tlTrack, tracks) {
             next.addClass("enabled");
         }
 
-        $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
         if (trackNo != null) {
             $("#album-info .track-list .track-" + trackNo).addClass("paused");
         }
@@ -265,6 +294,12 @@ var play = function() {
 var pause = function() {
     prettyLog("Pausing current track");
     mopidy.playback.pause();
+}
+
+var stop = function() {
+    prettyLog("Stopping playback");
+    mopidy.playback.stop();
+    mopidy.tracklist.clear();
 }
 
 var parseAlbumData = function(albumTrackData) {
