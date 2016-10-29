@@ -28,7 +28,7 @@ section#loading div.padding {
 section#loading div.message {
   width: 100%;
   text-align: center;
-  font-size: 10pt;
+  font-size: 18pt;
 }
 
 /*
@@ -49,7 +49,7 @@ section#album-list .cover-item img.cover {
 
 section#album-info img.album-image {
   display: block;
-  margin: 10%;
+  margin: 0 10% 5% 10%;
   width: 80%;
 }
 
@@ -100,56 +100,73 @@ section#album-info .controls {
 
 section#album-info .controls a {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  text-align: center;
+  padding: 20px 0 20px 0;
 }
 
-section#album-info .controls .play {
+section#album-info .controls a .icon,
+section#album-info .controls a .icon2 {
+  display: inline-block;
+}
+
+section#album-info .controls .play .icon {
   width: 0px;
   height: 0px;
-  border-top: 8px solid transparent;
-  border-left: 12px solid #ddd;
-  border-bottom: 8px solid transparent;
+  border-top: 12px solid transparent;
+  border-left: 18px solid #ddd;
+  border-bottom: 12px solid transparent;
 }
 
-section#album-info .controls .play.enabled {
+section#album-info .controls .play.enabled .icon {
   border-color: transparent #000 transparent;
 }
 
-section#album-info .controls .pause {
-  width: 12px;
-  height: 16px;
-  border-left: 4px solid #ddd;
-  border-right: 4px solid #ddd;
+section#album-info .controls .pause .icon {
+  width: 18px;
+  height: 24px;
+  border-left: 6px solid #ddd;
+  border-right: 6px solid #ddd;
 }
 
-section#album-info .controls .pause.enabled {
+section#album-info .controls .pause.enabled .icon {
   border-color: transparent #000 transparent #000;
 }
 
-section#album-info .controls .next {
+section#album-info .controls .previous .icon {
   width: 0px;
-  height: 0px;
-  border-right: 4px solid #ddd;
-  border-top: 8px solid transparent;
-  border-left: 12px solid #ddd;
-  border-bottom: 8px solid transparent;
+  height: 24px;
+  border-left: 4px solid #ddd;
 }
 
-section#album-info .controls .next.enabled {
+section#album-info .controls .previous .icon2 {
+  width: 0px;
+  height: 0px;
+  border-top: 12px solid transparent;
+  border-right: 18px solid #ddd;
+  border-bottom: 12px solid transparent;
+}
+
+section#album-info .controls .previous.enabled .icon,
+section#album-info .controls .previous.enabled .icon2 {
   border-color: transparent #000 transparent #000;
 }
 
-section#album-info .controls .previous {
+section#album-info .controls .next .icon {
   width: 0px;
   height: 0px;
-  border-left: 4px solid #ddd;
-  border-top: 8px solid transparent;
-  border-right: 12px solid #ddd;
-  border-bottom: 8px solid transparent;
+  border-top: 12px solid transparent;
+  border-left: 18px solid #ddd;
+  border-bottom: 12px solid transparent;
 }
 
-section#album-info .controls .previous.enabled {
+section#album-info .controls .next .icon2 {
+  width: 0px;
+  height: 24px;
+  border-right: 4px solid #ddd;
+}
+
+section#album-info .controls .next.enabled .icon,
+section#album-info .controls .next.enabled .icon2 {
   border-color: transparent #000 transparent #000;
 }
 
