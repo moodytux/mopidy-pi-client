@@ -18,6 +18,7 @@ var showScreen = function(screenName, params) {
         prettyLog("About to send the user to the album list screen");
         getAlbumTrackData()
             .then(parseAlbumData)
+            .then(sortAlbumData)
             .done(renderAlbumList);
 
     } else if (screenName == "album-info") {
@@ -313,15 +314,50 @@ var stop = function() {
 }
 
 var parseAlbumData = function(albumTrackData) {
-    var albumData = {};
+    var albumData = [];
     if (albumTrackData) {
         $.each(albumTrackData, function(index, trackObjs) {
             if (trackObjs.length > 0) {
                 var album = trackObjs[0].album;
-                albumData[album.name] = album;
+                albumData.push(album);
             }
         });
     }
+
+    return albumData;
+}
+
+var sortAlbumData = function(albumData) {
+    prettyLog("Sorting album data");
+
+    var SortOrder = {
+      LEFT_FIRST: -1,
+      RIGHT_FIRST: 1,
+      SAME: 0,
+    };
+
+    albumData.sort(function(left, right) {
+        if (typeof(left.artists) === "undefined") {
+            result = SortOrder.RIGHT_FIRST;
+        } else if (typeof(right.artists) === "undefined") {
+            result = SortOrder.LEFT_FIRST;
+        } else {
+            var leftName = left.artists[0].name.toLowerCase();
+            var rightName = right.artists[0].name.toLowerCase();
+
+            var result;
+            if (leftName < rightName) {
+                result = SortOrder.LEFT_FIRST;
+            } else if (leftName > rightName) {
+                result = SortOrder.RIGHT_FIRST;
+            } else {
+                result = SortOrder.SAME;
+            }
+        }
+
+        return result;
+    });
+
     return albumData;
 }
 
