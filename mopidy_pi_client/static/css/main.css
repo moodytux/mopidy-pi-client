@@ -35,12 +35,8 @@ section#loading div.message {
  * Album list screen
  */
 
-section#album-list .cover-item {
+section#album-list img.cover {
   width: 40%;
-}
-
-section#album-list .cover-item img.cover {
-  width: 100%;
 }
 
 /*

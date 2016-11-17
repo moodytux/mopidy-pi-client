@@ -100,33 +100,35 @@ var renderAlbumList = function(albums) {
     prettyLog("About to render the following albums", albums);
 
     // Reinitialise the list screen.
-    $('#album-list div.artwork').empty();
+    $('#album-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
 
     if (albums != null) {
         $.each(albums, function(index, album) {
-            if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
-                var itemDiv = $("<div class='cover-item' />")
-                    .text(album.name)
-                    .appendTo($("#album-list .artwork"));
-
-                $("<img/>")
-                    .addClass("cover")
-                    .attr("src", album.images[0])
-                    .click(function() {
-                        showScreen("album-info", {albumUri: album.uri } );
-                    })
-                    .appendTo(itemDiv);
+            if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
+                if (typeof(album.artists) !== "undefined") {
+                    $("<img/>")
+                        .attr("src", album.images[0])
+                        .addClass("cover")
+                        .attr("data-piclient-albumname", album.name)
+                        .attr("data-piclient-albumartist", album.artists[0].name)
+                        .click(function() {
+                            showScreen("album-info", {albumUri: album.uri } );
+                        })
+                        .appendTo($("#album-list div.coverflow"));
+                } else {
+                    prettyLog("Missing artists for album", album);
+                }
+            } else {
+                prettyLog("Missing album image for album", album);
             }
-        });
-
-        // Render as coverflow.
-        $(function() {
-            $(".coverflow").coverflow();
         });
 
         // Show our album list screen, hide other screens.
         $(".screen").hide();
         $("#album-list").show();
+
+        // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so the display none has been removed.
+        $(".coverflow").coverflow();
     }
 }
 

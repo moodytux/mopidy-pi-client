@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mopidy Pi Client</title>
-    <link href="/pi-client/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/pi-client/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/pi-client/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pi-client/css/main.css" />
   </head>
   <body>
     <section id="offline" class="screen" style="display: none">
@@ -23,7 +23,10 @@
 
     <section id="album-list" class="screen" style="display: none">
       <div class="row">
-        <div class="col-sm-12 artwork coverflow"></div>
+        <div class="col-sm-12">
+          <div class="coverflow">
+          </div>
+        </div>
       </div>
     </section>
 
@@ -68,14 +71,14 @@
       </div>
     </section>
 
-    <script type="text/javascript" src="/pi-client/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="/pi-client/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="/pi-client/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/pi-client/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/mopidy/mopidy.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow-master/reflection.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow-master/jquery.interpolate.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow-master/jquery.touchSwipe.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow-master/jquery.coverflow.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflow/reflection.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.interpolate.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.touchSwipe.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.coverflow.js"></script>
     <script type="text/javascript" src="/pi-client/js/main.js"></script>
   </body>
 </html>
