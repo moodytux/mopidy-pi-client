@@ -20,12 +20,13 @@ Mopidy extension specifically for the Raspberry Pi Touchscreen
 Installation
 ============
 
-Install by running::
+Currently, this plugin in is development so you will need to clone this repo and run::
+
+    sudo pip install -e mopidy-pi-client
+
+Eventually you will be able to install by running::
 
     pip install Mopidy-Pi-Client
-
-Or, if available, install the Debian/Ubuntu package from `apt.mopidy.com
-<http://apt.mopidy.com/>`_.
 
 
 Configuration
@@ -35,7 +36,19 @@ Before starting Mopidy, you must add configuration for
 Mopidy-Pi-Client to your Mopidy configuration file::
 
     [pi-client]
-    # TODO: Add example of extension config
+    enabled = true
+
+
+Future development
+==================
+
+- Add back icon to album info screen
+- Adding gesture support to the track list on the album info screen
+- Selecting albums by artist letter
+- Selecting albums by genre
+- Default to cached album list state, providing refresh button mechanism
+- Providing track duration and elapsed time information
+- Integration with Deezer to find new music by the same artist
 
 
 Project resources
@@ -48,8 +61,8 @@ Project resources
 Credits
 =======
 
-- Original author: `Stephen Kirkby <https://github.com/moodytux`__
-- Current maintainer: `Stephen Kirkby <https://github.com/moodytux`__
+- Original author: `Stephen Kirkby <https://github.com/moodytux>`_
+- Current maintainer: `Stephen Kirkby <https://github.com/moodytux>`_
 - `Contributors <https://github.com/moodytux/mopidy-pi-client/graphs/contributors>`_
 
 

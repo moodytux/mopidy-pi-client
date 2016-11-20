@@ -13,8 +13,12 @@ body {
 section {
   width: 100%;
   height: 100%;
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   background-color: #f2f2f2;
+}
+
+.full-height {
+  height: 100%;
 }
 
 /*
@@ -43,14 +47,22 @@ section#album-list img.cover {
  * Album info screen
  */
 
-section#album-info .album-image {
-  position: relative;
-  width: 80%;
-  margin: 0 10% 5% 10%;
+section#album-info {
+  height: 100%;
+  overflow-y: hidden;
 }
 
-section#album-info .album-image img {
-  width: 100%;
+section#album-info .row .track-list-col {
+  height: 100%;
+  padding-bottom: 20px;
+}
+
+section#album-info .album-image {
+  position: relative;
+  height: calc(100% - 64px);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 section#album-info .album-image .play-album-control {
@@ -100,7 +112,7 @@ section#album-info .album-image .play-album-control .icon {
 }
 
 section#album-info .track-list {
-  height: 90%;
+  height: 100%;
   overflow-y: auto;
 }
 
@@ -133,6 +145,7 @@ section#album-info .track-list a.paused .indicator {
 }
 
 section#album-info .controls {
+  height: 64px;
   margin: 0 10% 0 10%;
 }
 
@@ -140,6 +153,7 @@ section#album-info .controls a {
   display: block;
   text-align: center;
   padding: 20px 0 20px 0;
+  line-height: 10px;
 }
 
 section#album-info .controls a .icon,
