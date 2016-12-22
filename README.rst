@@ -42,11 +42,10 @@ Mopidy-Pi-Client to your Mopidy configuration file::
 Future development
 ==================
 
-- Add back icon to album info screen
-- Adding gesture support to the track list on the album info screen
 - Selecting albums by artist letter
+- Adding gesture support to the track list on the album info screen
 - Selecting albums by genre
-- Default to cached album list state, providing refresh button mechanism
+- Provide a refresh button for refreshing album list
 - Providing track duration and elapsed time information
 - Integration with Deezer to find new music by the same artist
 
