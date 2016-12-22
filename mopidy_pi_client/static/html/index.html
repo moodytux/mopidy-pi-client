@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mopidy Pi Client</title>
     <link rel="stylesheet" type="text/css" href="/pi-client/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pi-client/css/coverflowjs-3.0.2.css" />
     <link rel="stylesheet" type="text/css" href="/pi-client/css/main.css" />
   </head>
   <body>
@@ -23,7 +24,7 @@
 
     <section id="album-list" class="screen" style="display: none">
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 coverflow-container">
           <div class="coverflow">
           </div>
         </div>
@@ -73,10 +74,8 @@
     <script type="text/javascript" src="/pi-client/js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/pi-client/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/mopidy/mopidy.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow/reflection.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.interpolate.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.touchSwipe.min.js"></script>
-    <script type="text/javascript" src="/pi-client/js/coverflow/jquery.coverflow.js"></script>
+    <script type="text/javascript" src="/pi-client/js/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflowjs-3.0.2.min.js"></script>
     <script type="text/javascript" src="/pi-client/js/main.js"></script>
   </body>
 </html>

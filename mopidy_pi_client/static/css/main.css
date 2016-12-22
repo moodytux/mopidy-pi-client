@@ -21,6 +21,17 @@ section {
   height: 100%;
 }
 
+/**
+ * JQuery mobile fixes
+ */
+.ui-page {
+  height: inherit;
+}
+
+.ui-loader {
+  display: none;
+}
+
 /*
  * Loading screen
  */
@@ -39,8 +50,17 @@ section#loading div.message {
  * Album list screen
  */
 
-section#album-list img.cover {
-  width: 40%;
+section#album-list .coverflow-container {
+  margin-top: 100px;
+  height: 250px;
+}
+
+section#album-list .cover {
+  width: 200px;  /* coverflowjs seems to want a set width */
+  height: 200px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 /*
