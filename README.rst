@@ -17,6 +17,14 @@ Mopidy-Pi-Client
 Mopidy extension specifically for the Raspberry Pi Touchscreen
 
 
+Screenshots
+===========
+
+.. image:: /screenshots/album-info-screen.png
+.. image:: /screenshots/album-list-screen.png
+.. image:: /screenshots/loading-screen.png
+
+
 Installation
 ============
 
@@ -67,6 +75,11 @@ Credits
 
 Changelog
 =========
+
+v0.1.1
+----------------------------------------
+
+- Bugfix to the album info back button state, it should always be enabled.
 
 v0.1.0
 ----------------------------------------
