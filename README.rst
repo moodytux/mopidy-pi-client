@@ -50,6 +50,9 @@ Mopidy-Pi-Client to your Mopidy configuration file::
 Future development
 ==================
 
+- Show track artist on a Various Artists album info screen
+- Show the elapsed time of current track as a progress bar
+- Look into possibility of removing cursor to be more touch friendly
 - Selecting albums by artist letter
 - Adding gesture support to the track list on the album info screen
 - Selecting albums by genre
