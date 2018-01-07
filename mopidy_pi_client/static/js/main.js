@@ -118,24 +118,18 @@ var renderCoverList = function(albums) {
     albums.sort(sortAlbumDataByArtist);
     if (albums != null) {
         $.each(albums, function(index, album) {
-            if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
-                if ((typeof(album.artists) !== "undefined")) {
-                    $("<div/>")
-                        .css("background-image", "url(" + album.images[0] + ")")
-                        .addClass("cover")
-                        .attr("data-piclient-albumname", album.name)
-                        .attr("data-piclient-albumartist", album.artists[0].name)
-                        .click(function() {
-                            if($(this).hasClass('ui-state-active')) {
-                                showScreen("album-info", {albumUri: album.uri } );
-                            }
-                        })
-                        .appendTo($("#album-and-category-list div.coverflow"));
-                } else {
-                    prettyLog("Missing artists for album", album);
-                }
-            } else {
-                prettyLog("Missing album image for album", album);
+            if (isAlbumDataValid(album)) {
+                $("<div/>")
+                    .css("background-image", "url(" + album.images[0] + ")")
+                    .addClass("cover")
+                    .attr("data-piclient-albumname", album.name)
+                    .attr("data-piclient-albumartist", album.artists[0].name)
+                    .click(function() {
+                        if($(this).hasClass('ui-state-active')) {
+                            showScreen("album-info", {albumUri: album.uri } );
+                        }
+                    })
+                    .appendTo($("#album-and-category-list div.coverflow"));
             }
         });
     }
@@ -157,34 +151,28 @@ var renderCategoryList = function(album) {
     albums.sort(sortAlbumDataByGenre);
     if (albums != null) {
         $.each(albums, function(index, album) {
-            if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
-                if ((typeof(album.artists) !== "undefined") && (typeof(album.genre) !== "undefined")) {
-                    // If this is the first category, setup our list.
-                    if (typeof categorySeenList === "undefined") {
-                        categorySeenList = [];
-                    }
-
-                    // If this is the first time we've seen this category, add it to our seen list and
-                    // all to the category flow.
-                    if (categorySeenList.indexOf(album.genre) == -1) {
-                        categorySeenList.push(album.genre);
-
-                        prettyLog("Adding genre", album.genre);
-                        $("<div/>")
-                            .addClass("category")
-                            .text(album.genre)
-                            .click(function() {
-                                if($(this).hasClass('ui-state-active')) {
-                                    console.log("Just clicked " + album.genre);
-                                }
-                            })
-                            .appendTo($("#album-and-category-list div.categoryflow"));
-                    }
-                } else {
-                    prettyLog("Missing artists for album", album);
+            if (isAlbumDataValid(album)) {
+                // If this is the first category, setup our list.
+                if (typeof categorySeenList === "undefined") {
+                    categorySeenList = [];
                 }
-            } else {
-                prettyLog("Missing album image for album", album);
+
+                // If this is the first time we've seen this category, add it to our seen list and
+                // all to the category flow.
+                if (categorySeenList.indexOf(album.genre) == -1) {
+                    categorySeenList.push(album.genre);
+
+                    prettyLog("Adding genre", album.genre);
+                    $("<div/>")
+                        .addClass("category")
+                        .text(album.genre)
+                        .click(function() {
+                            if($(this).hasClass('ui-state-active')) {
+                                console.log("Just clicked " + album.genre);
+                            }
+                        })
+                        .appendTo($("#album-and-category-list div.categoryflow"));
+                }
             }
         });
     }
@@ -379,6 +367,22 @@ var stop = function() {
     prettyLog("Stopping playback");
     mopidy.playback.stop();
     mopidy.tracklist.clear();
+}
+
+var isAlbumDataValid = function(album) {
+    var isValid = true;
+
+    if ((typeof(album.images) === "undefined") || (album.images.length < 1)) {
+        prettyLog("Missing album image for album", album);
+        isValid = false;
+    }
+
+    if ((typeof(album.artists) === "undefined")) {
+        prettyLog("Missing artists for album", album);
+        isValid = false;
+    }
+
+    return isValid;
 }
 
 var parseAlbumData = function(albumTrackData) {
