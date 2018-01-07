@@ -104,7 +104,7 @@ var renderAlbumAndCategoryList = function(albums) {
     // Fill our coverflow if we haven't done so already.
     if (typeof initialisedCoverflow === "undefined") {
         renderCoverList(albums);
-        //renderCategoryList(albums);
+        renderCategoryList(albums);
 
         initialisedCoverflow = true;
     }
@@ -143,7 +143,7 @@ var renderCoverList = function(albums) {
     });
 }
 
-var renderCategoryList = function(album) {
+var renderCategoryList = function(albums) {
     // Reinitialise the list screen.
     $('#album-and-category-list div.categoryflow').replaceWith($("<div/>").addClass("categoryflow"));
 
@@ -382,16 +382,22 @@ var isAlbumDataValid = function(album) {
         isValid = false;
     }
 
+    if ((typeof(album.genre) === "undefined")) {
+        prettyLog("Missing genre for album", album);
+        isValid = false;
+    }
+
     return isValid;
 }
 
 var parseAlbumData = function(albumTrackData) {
+    prettyLog("Parsing album data from albumTrackData", albumTrackData);
     var albumData = [];
     if (albumTrackData) {
         $.each(albumTrackData, function(index, trackObjs) {
             if (trackObjs.length > 0) {
                 var album = trackObjs[0].album;
-//todo                album.genre = trackObjs[0].genre;
+                album.genre = trackObjs[0].genre;
                 albumData.push(album);
             }
         });
