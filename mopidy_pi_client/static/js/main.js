@@ -18,7 +18,6 @@ var showScreen = function(screenName, params) {
         prettyLog("About to send the user to the album list screen");
         getAlbumTrackData()
             .then(parseAlbumData)
-            .then(sortAlbumData)
             .done(renderAlbumList);
 
     } else if (screenName == "album-info") {
@@ -107,6 +106,8 @@ var renderAlbumList = function(albums) {
         // Reinitialise the list screen.
         $('#album-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
 
+        // Sort the album data by artist and add to coverflow.
+        albums.sort(sortAlbumDataByArtist);
         if (albums != null) {
             $.each(albums, function(index, album) {
                 if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
@@ -339,8 +340,8 @@ var parseAlbumData = function(albumTrackData) {
     return albumData;
 }
 
-var sortAlbumData = function(albumData) {
-    prettyLog("Sorting album data");
+var sortAlbumDataByArtist = function(left, right) {
+    prettyLog("Sorting album data by artist");
 
     var SortOrder = {
       LEFT_FIRST: -1,
@@ -348,29 +349,55 @@ var sortAlbumData = function(albumData) {
       SAME: 0,
     };
 
-    albumData.sort(function(left, right) {
-        if (typeof(left.artists) === "undefined") {
-            result = SortOrder.RIGHT_FIRST;
-        } else if (typeof(right.artists) === "undefined") {
+    if (typeof(left.artists) === "undefined") {
+        result = SortOrder.RIGHT_FIRST;
+    } else if (typeof(right.artists) === "undefined") {
+        result = SortOrder.LEFT_FIRST;
+    } else {
+        var leftName = left.artists[0].name.toLowerCase();
+        var rightName = right.artists[0].name.toLowerCase();
+
+        var result;
+        if (leftName < rightName) {
             result = SortOrder.LEFT_FIRST;
+        } else if (leftName > rightName) {
+            result = SortOrder.RIGHT_FIRST;
         } else {
-            var leftName = left.artists[0].name.toLowerCase();
-            var rightName = right.artists[0].name.toLowerCase();
-
-            var result;
-            if (leftName < rightName) {
-                result = SortOrder.LEFT_FIRST;
-            } else if (leftName > rightName) {
-                result = SortOrder.RIGHT_FIRST;
-            } else {
-                result = SortOrder.SAME;
-            }
+            result = SortOrder.SAME;
         }
+    }
 
-        return result;
-    });
+    return result;
+}
 
-    return albumData;
+var sortAlbumDataByGenre = function(left, right) {
+    prettyLog("Sorting album data by genre");
+
+    var SortOrder = {
+      LEFT_FIRST: -1,
+      RIGHT_FIRST: 1,
+      SAME: 0,
+    };
+
+    if (typeof(left.genre) === "undefined") {
+        result = SortOrder.RIGHT_FIRST;
+    } else if (typeof(right.genre) === "undefined") {
+        result = SortOrder.LEFT_FIRST;
+    } else {
+        var leftName = left.genre.toLowerCase();
+        var rightName = right.genre.toLowerCase();
+
+        var result;
+        if (leftName < rightName) {
+            result = SortOrder.LEFT_FIRST;
+        } else if (leftName > rightName) {
+            result = SortOrder.RIGHT_FIRST;
+        } else {
+            result = SortOrder.SAME;
+        }
+    }
+
+    return result;
 }
 
 var prettyLog = function(message, obj) {
