@@ -14,11 +14,11 @@ var showScreen = function(screenName, params) {
         prettyLog("About to show the loading screen");
         $(".screen").hide();
         $("#loading").show();
-    } else if (screenName == 'album-list') {
+    } else if (screenName == 'album-and-category-list') {
         prettyLog("About to send the user to the album list screen");
         getAlbumTrackData()
             .then(parseAlbumData)
-            .done(renderAlbumList);
+            .done(renderAlbumAndCategoryList);
 
     } else if (screenName == "album-info") {
         prettyLog("About to send the user to the album info screen, with URI", params.albumUri);
@@ -94,53 +94,108 @@ var renderAlbumInfo = function(tracks) {
     }
 }
 
-var renderAlbumList = function(albums) {
-    prettyLog("About to render the following albums", albums);
+var renderAlbumAndCategoryList = function(albums) {
+    prettyLog("About to render the following albums along with their categories", albums);
 
     // Show our album list screen, hide other screens.
     $(".screen").hide();
-    $("#album-list").show();
+    $("#album-and-category-list").show();
 
     // Fill our coverflow if we haven't done so already.
     if (typeof initialisedCoverflow === "undefined") {
-        // Reinitialise the list screen.
-        $('#album-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
-
-        // Sort the album data by artist and add to coverflow.
-        albums.sort(sortAlbumDataByArtist);
-        if (albums != null) {
-            $.each(albums, function(index, album) {
-                if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
-                    if (typeof(album.artists) !== "undefined") {
-                        $("<div/>")
-                            .css("background-image", "url(" + album.images[0] + ")")
-                            .addClass("cover")
-                            .attr("data-piclient-albumname", album.name)
-                            .attr("data-piclient-albumartist", album.artists[0].name)
-                            .click(function() {
-                                if($(this).hasClass('ui-state-active')) {
-                                    showScreen("album-info", {albumUri: album.uri } );
-                                }
-                            })
-                            .appendTo($("#album-list div.coverflow"));
-                    } else {
-                        prettyLog("Missing artists for album", album);
-                    }
-                } else {
-                    prettyLog("Missing album image for album", album);
-                }
-            });
-        }
-
-        // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so the display none has been removed.
-        $(".coverflow").coverflow({
-            select: function(event, ui) {
-                console.log(ui);
-            }
-        });
+        renderCoverList(albums);
+        //renderCategoryList(albums);
 
         initialisedCoverflow = true;
     }
+}
+
+var renderCoverList = function(albums) {
+    // Reinitialise the list screen.
+    $('#album-and-category-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
+
+    // Sort the album data by artist and add to coverflow.
+    albums.sort(sortAlbumDataByArtist);
+    if (albums != null) {
+        $.each(albums, function(index, album) {
+            if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
+                if ((typeof(album.artists) !== "undefined")) {
+                    $("<div/>")
+                        .css("background-image", "url(" + album.images[0] + ")")
+                        .addClass("cover")
+                        .attr("data-piclient-albumname", album.name)
+                        .attr("data-piclient-albumartist", album.artists[0].name)
+                        .click(function() {
+                            if($(this).hasClass('ui-state-active')) {
+                                showScreen("album-info", {albumUri: album.uri } );
+                            }
+                        })
+                        .appendTo($("#album-and-category-list div.coverflow"));
+                } else {
+                    prettyLog("Missing artists for album", album);
+                }
+            } else {
+                prettyLog("Missing album image for album", album);
+            }
+        });
+    }
+
+    // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
+    // the display none has been removed.
+    $(".coverflow").coverflow({
+        select: function(event, ui) {
+            console.log(ui);
+        }
+    });
+}
+
+var renderCategoryList = function(album) {
+    // Reinitialise the list screen.
+    $('#album-and-category-list div.categoryflow').replaceWith($("<div/>").addClass("categoryflow"));
+
+    // Sort the album data by genre and add to category flow.
+    albums.sort(sortAlbumDataByGenre);
+    if (albums != null) {
+        $.each(albums, function(index, album) {
+            if ((typeof(album.images) !== "undefined") && (album.images.length > 0)) {
+                if ((typeof(album.artists) !== "undefined") && (typeof(album.genre) !== "undefined")) {
+                    // If this is the first category, setup our list.
+                    if (typeof categorySeenList === "undefined") {
+                        categorySeenList = [];
+                    }
+
+                    // If this is the first time we've seen this category, add it to our seen list and
+                    // all to the category flow.
+                    if (categorySeenList.indexOf(album.genre) == -1) {
+                        categorySeenList.push(album.genre);
+
+                        prettyLog("Adding genre", album.genre);
+                        $("<div/>")
+                            .addClass("category")
+                            .text(album.genre)
+                            .click(function() {
+                                if($(this).hasClass('ui-state-active')) {
+                                    console.log("Just clicked " + album.genre);
+                                }
+                            })
+                            .appendTo($("#album-and-category-list div.categoryflow"));
+                    }
+                } else {
+                    prettyLog("Missing artists for album", album);
+                }
+            } else {
+                prettyLog("Missing album image for album", album);
+            }
+        });
+    }
+
+    // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
+    // the display none has been removed.
+    $(".categoryflow").coverflow({
+        select: function(event, ui) {
+            console.log(ui);
+        }
+    });
 }
 
 var renderControls = function(state, tlTrack, tracks) {
@@ -170,7 +225,7 @@ var renderControls = function(state, tlTrack, tracks) {
         });
         $("#album-info .controls .back").click(function() {
             stop();
-            showScreen("album-list");
+            showScreen("album-and-category-list");
         });
 
         // Flag that we are all setup with click listeners.
@@ -332,6 +387,7 @@ var parseAlbumData = function(albumTrackData) {
         $.each(albumTrackData, function(index, trackObjs) {
             if (trackObjs.length > 0) {
                 var album = trackObjs[0].album;
+//todo                album.genre = trackObjs[0].genre;
                 albumData.push(album);
             }
         });
@@ -426,6 +482,6 @@ $(function() {
         showScreen("loading");
 
         // Show the album list which may take some time.
-        showScreen("album-list");
+        showScreen("album-and-category-list");
     });
 })

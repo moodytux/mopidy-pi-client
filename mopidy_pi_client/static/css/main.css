@@ -50,17 +50,31 @@ section#loading div.message {
  * Album list screen
  */
 
-section#album-list .coverflow-container {
+section#album-and-category-list .coverflow-container {
   margin-top: 100px;
   height: 250px;
 }
 
-section#album-list .cover {
+section#album-and-category-list .cover {
   width: 200px;  /* coverflowjs seems to want a set width */
   height: 200px;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
+}
+
+section#album-and-category-list .categoryflow-container {
+  margin-top: 20px;
+  height: 100px;
+}
+
+section#album-and-category-list .category {
+  width: 200px;  /* coverflowjs seems to want a set width */
+  height: 50px;
+  line-height: 50px;
+  font-size: 25px;
+  text-align: center;
+  background-color: #fff;
 }
 
 /*
