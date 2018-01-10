@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mopidy Pi Client</title>
+    <link rel="stylesheet" type="text/css" href="/pi-client/css/coverflowjs-3.0.2.css" />
+    <style>
+    .cover {
+        width: 40vw;
+        height: 30vw;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+    </style>
+  </head>
+  <body>
+
+    <section id="album-list" style="height: 60vh">
+      <div class="coverflow">
+        <div class="cover" style="background-image: url(/images/777cd1571fe0aa9e274324d4b5b94d19-300x300.jpeg)" data-album="foo"></div>
+        <div class="cover" style="background-image: url(/images/3aa919341111ba35985749bd20532377-463x461.jpeg)" data-album="foo2"></div>
+        <div class="cover" style="background-image: url(/images/ec29eb91f8955cf6ead3ef37a7a8cf3e-500x446.jpeg)" data-album="foo3"></div>
+        <div class="cover" style="background-image: url(/images/9620f2b39e3dc8917cea034225e4e734-320x320.jpeg)" data-album="foo4"></div>
+        <div class="cover" style="background-image: url(/images/b58440ce1a54602c2b0e2d81c8907dfa-300x293.jpeg)" data-album="foo5"></div>
+        <div class="cover" style="background-image: url(/images/c5cb8d5ddd96722036f5ee9c3d8f465c-300x300.png)" data-album="foo6"></div>
+        <div class="cover" style="background-image: url(/images/888b0ff21663fbb29fe791874a20740b-300x300.png)" data-album="foo7"></div>
+      </div>
+    </section>
+
+    <script type="text/javascript" src="/pi-client/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="/pi-client/js/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="/pi-client/js/coverflowjs-3.0.2.min.js"></script>
+    <script>
+        $(".coverflow").coverflow({
+          select: function(event, ui) {
+            console.log("event");
+            console.log(event);
+            console.log("ui");
+            console.log(ui);
+          }
+        });
+    </script>
+  </body>
+</html>
