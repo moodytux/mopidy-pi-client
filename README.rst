@@ -67,12 +67,16 @@ Development
 ===========
 
 To develop on mopidy-pi-client, there is a ready made Vagrantfile and Ansible playbook to setup a working environment in VirtualBox:
+
 - Add some music to the vagrant/music sub-directory to test with
 - Get your environment up and running by typing in a terminal::
+
     cd <repo_path>/vagrant
     vagrant up
+
 - See your environment in a browser by going to http://192.168.33.10/pi-music/html/
 - Run the unit tests by typing in a terminal::
+
     cd <repo_path>/vagrant
     vagrant ssh
     sudo su - mopidy
