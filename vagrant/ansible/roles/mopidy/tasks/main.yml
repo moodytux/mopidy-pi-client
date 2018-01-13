@@ -1,0 +1,43 @@
+---
+- name: Install mopidy and nodejs
+  become: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - mopidy
+    - npm
+    - nodejs-legacy
+
+- name: Give the mopidy user a shell
+  become: yes
+  user: name=mopidy shell=/bin/bash
+
+- name: Install qunit package globally
+  become: yes
+  npm:
+    name: qunit
+    global: yes
+
+- name: Install all required mopidy extensions
+  become: yes
+  become_user: mopidy
+  pip: name={{ item }}
+  with_items:
+  - Mopidy-Local-SQLite
+  - Mopidy-Local-Images
+
+- name: Install the mopidy pi client from our synced folder
+  become: yes
+  become_user: mopidy
+  pip: name=file:///mopidy-pi-client extra_args=-e
+
+- name: Change default mopidy config
+  become: yes
+  template: src=mopidy.conf.tpl dest=/etc/mopidy/mopidy.conf
+
+- name: Restart mopidy
+  become: yes
+  service: name=mopidy enabled=yes state=restarted
+
+- name: Rescan for music on mopidy
+  command: mopidyctl local scan
+  become: yes

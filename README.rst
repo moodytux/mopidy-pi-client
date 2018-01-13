@@ -46,9 +46,11 @@ Mopidy-Pi-Client to your Mopidy configuration file::
     [pi-client]
     enabled = true
 
+Load a web browser up and go to: http://<configured_ip>:<configured_port>/pi-client/html/
 
-Future development
-==================
+
+Feature roadmap
+===============
 
 - Show track artist on a Various Artists album info screen
 - Show the elapsed time of current track as a progress bar
@@ -59,6 +61,23 @@ Future development
 - Provide a refresh button for refreshing album list
 - Providing track duration and elapsed time information
 - Integration with Deezer to find new music by the same artist
+
+
+Development
+===========
+
+To develop on mopidy-pi-client, there is a ready made Vagrantfile and Ansible playbook to setup a working environment in VirtualBox:
+- Add some music to the vagrant/music sub-directory to test with
+- Get your environment up and running by typing in a terminal::
+    cd <repo_path>/vagrant
+    vagrant up
+- See your environment in a browser by going to http://192.168.33.10/pi-music/html/
+- Run the unit tests by typing in a terminal::
+    cd <repo_path>/vagrant
+    vagrant ssh
+    sudo su - mopidy
+    cd /mopidy-pi-client
+    qunit
 
 
 Project resources

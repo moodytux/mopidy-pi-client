@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: no
+  pre_tasks:
+  - name: Install python for Ansible
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    changed_when: false
+    become: yes
+  vars_files:
+    - vars/all.yml
+  roles:
+    - server
+    - mopidy
