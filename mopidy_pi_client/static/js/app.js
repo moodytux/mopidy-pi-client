@@ -11,11 +11,12 @@ requirejs.config({
     shim: {
         "jquery-ui": ["jquery"],
         "jquery-mobile": ["jquery","jquery-ui"],
-        "coverflowjs": ["jquery", "jquery-ui", "jquery-mobile"]
+        "coverflowjs": ["jquery", "jquery-ui", "jquery-mobile"],
+        "bootstrap": ["jquery"]
     }
 });
 
-requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflowjs, bootstrap, Mopidy) {
+requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger"], function($, coverflowjs, bootstrap, Mopidy, logger) {
     var ControlsState = {
       NOT_STARTED: "NOT_STARTED",
       PLAY_FINISHED: "PLAY_FINISHED",
@@ -29,17 +30,17 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
 
     var showScreen = function(screenName, params) {
         if (screenName == 'loading') {
-            prettyLog("About to show the loading screen");
+            logger.log("About to show the loading screen");
             $(".screen").hide();
             $("#loading").show();
         } else if (screenName == 'album-and-category-list') {
-            prettyLog("About to send the user to the album list screen");
+            logger.log("About to send the user to the album list screen");
             getAlbumTrackData()
                 .then(parseAlbumData)
                 .done(renderAlbumAndCategoryList);
 
         } else if (screenName == "album-info") {
-            prettyLog("About to send the user to the album info screen, with URI", params.albumUri);
+            logger.log("About to send the user to the album info screen, with URI", params.albumUri);
             getAlbumTrackData()
                 .then(function(albumTrackData) {
                     return albumTrackData[params.albumUri];
@@ -53,7 +54,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
      */
 
     var renderAlbumInfo = function(tracks) {
-        prettyLog("About to render the following tracks", tracks);
+        logger.log("About to render the following tracks", tracks);
 
         // Reinitialise the info screen.
         $('#album-info .track-list').empty();
@@ -113,7 +114,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var renderAlbumAndCategoryList = function(albums) {
-        prettyLog("About to render the following albums along with their categories", albums);
+        logger.log("About to render the following albums along with their categories", albums);
 
         // Show our album list screen, hide other screens.
         $(".screen").hide();
@@ -180,7 +181,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
                     if (categorySeenList.indexOf(album.genre) == -1) {
                         categorySeenList.push(album.genre);
 
-                        prettyLog("Adding genre", album.genre);
+                        logger.log("Adding genre", album.genre);
                         $("<div/>")
                             .addClass("category")
                             .text(album.genre)
@@ -205,7 +206,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var renderControls = function(state, tlTrack, tracks) {
-        prettyLog("About to render the controls with state " + state + " for track", tlTrack);
+        logger.log("About to render the controls with state " + state + " for track", tlTrack);
 
         if (typeof initialisedClickListeners === "undefined") {
             // Set up the controls click listeners.
@@ -304,7 +305,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     var getAlbumTrackData = function() {
         // If we need to, first fetch the album track data.
         if (typeof albumTrackData === 'undefined') {
-            prettyLog("Fetching album track data");
+            logger.log("Fetching album track data");
             albumTrackData = [];
 
             return getAlbumUris()
@@ -315,7 +316,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
                 });
         } else {
             // Return a promise with the data.
-            prettyLog("Already got data");
+            logger.log("Already got data");
             return Mopidy.when(albumTrackData);
         }
     }
@@ -337,20 +338,20 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
                 });
         } else {
             // Return a promise with the data.
-            prettyLog("Already got album URIs");
+            logger.log("Already got album URIs");
             return Mopidy.when(albumUris);
         }
     }
 
     var lookupAlbumUris = function(albumUris) {
-        prettyLog("About to lookup album URIs", albumUris);
+        logger.log("About to lookup album URIs", albumUris);
 
         // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
         return mopidy.library.lookup(null, albumUris);
     }
 
     var playTracks = function(tracks) {
-        prettyLog("About to add tracks to playlist and play first", tracks);
+        logger.log("About to add tracks to playlist and play first", tracks);
         mopidy.tracklist.clear()
             .then(function() {
                 return mopidy.tracklist.add(tracks);
@@ -363,12 +364,12 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var playPrevious = function() {
-        prettyLog("Play previous track");
+        logger.log("Play previous track");
         mopidy.playback.previous();
     }
 
     var playNext = function() {
-        prettyLog("Play next track");
+        logger.log("Play next track");
         mopidy.playback.next();
     }
 
@@ -377,12 +378,12 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var pause = function() {
-        prettyLog("Pausing current track");
+        logger.log("Pausing current track");
         mopidy.playback.pause();
     }
 
     var stop = function() {
-        prettyLog("Stopping playback");
+        logger.log("Stopping playback");
         mopidy.playback.stop();
         mopidy.tracklist.clear();
     }
@@ -391,17 +392,17 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
         var isValid = true;
 
         if ((typeof(album.images) === "undefined") || (album.images.length < 1)) {
-            prettyLog("Missing album image for album", album);
+            logger.log("Missing album image for album", album);
             isValid = false;
         }
 
         if ((typeof(album.artists) === "undefined")) {
-            prettyLog("Missing artists for album", album);
+            logger.log("Missing artists for album", album);
             isValid = false;
         }
 
         if ((typeof(album.genre) === "undefined")) {
-            prettyLog("Missing genre for album", album);
+            logger.log("Missing genre for album", album);
             isValid = false;
         }
 
@@ -409,7 +410,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var parseAlbumData = function(albumTrackData) {
-        prettyLog("Parsing album data from albumTrackData", albumTrackData);
+        logger.log("Parsing album data from albumTrackData", albumTrackData);
         var albumData = [];
         if (albumTrackData) {
             $.each(albumTrackData, function(index, trackObjs) {
@@ -425,7 +426,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var sortAlbumDataByArtist = function(left, right) {
-        prettyLog("Sorting album data by artist");
+        logger.log("Sorting album data by artist");
 
         var SortOrder = {
           LEFT_FIRST: -1,
@@ -455,7 +456,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
     }
 
     var sortAlbumDataByGenre = function(left, right) {
-        prettyLog("Sorting album data by genre");
+        logger.log("Sorting album data by genre");
 
         var SortOrder = {
           LEFT_FIRST: -1,
@@ -482,14 +483,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy"], function($, coverflo
         }
 
         return result;
-    }
-
-    var prettyLog = function(message, obj) {
-        if (typeof obj !== 'undefined') {
-            console.log("pi-client: " + message + " " + JSON.stringify(obj, null, 2));
-        } else {
-            console.log("pi-client: " + message);
-        }
     }
 
     /*
