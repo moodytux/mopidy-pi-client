@@ -1,4 +1,4 @@
-define(["app/logger", "app/mopidy"], function() {
+define(["app/logger", "app/mopidy"], function(logger, mopidy) {
     var controls = {};
 
     controls.playTracks = function(tracks) {

@@ -62,7 +62,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
                     .addClass("track")
                     .addClass("track-" + track.track_no)
                     .click(function() {
-                        playTracks(tracks.slice(index));
+                        controls.playTracks(tracks.slice(index));
                     })
                     .append("<div class='indicator' />")
                     .append("<div class='title'>" + track.track_no + ". " + track.name + "</div>")
@@ -77,7 +77,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
             }
             $("#album-info .album-image .play-album-control").unbind("click").click(function() {
                 $("#album-info .album-image .play-album-control .icon").fadeOut();
-                playTracks(tracks);
+                controls.playTracks(tracks);
                 $("#album-info .album-image .play-album-control .circle").addClass("disappear");
             });
 
@@ -289,19 +289,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
                 $("#album-info .track-list .track-" + trackNo).addClass("paused");
             }
         }
-    }
-
-    var playTracks = function(tracks) {
-        logger.log("About to add tracks to playlist and play first", tracks);
-        mopidy.tracklist.clear()
-            .then(function() {
-                return mopidy.tracklist.add(tracks);
-            })
-            .done(function(tlTracks) {
-                if (tlTracks && (tlTracks.length > 0)) {
-                    mopidy.playback.play(tlTracks[0]);
-                }
-            });
     }
 
     var isAlbumDataValid = function(album) {
