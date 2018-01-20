@@ -39,7 +39,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
 
         } else if (screenName == "album-info") {
             logger.log("About to send the user to the album info screen, with URI", params.albumUri);
-            albumData.getAlbumInfo(renderAlbumInfo);
+            albumData.getAlbumInfo(renderAlbumInfo, params.albumUri);
         }
     }
 

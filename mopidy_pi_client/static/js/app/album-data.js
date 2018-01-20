@@ -63,7 +63,7 @@ define(["mopidy", "app/logger", "app/mopidy"], function(Mopidy, logger, mopidy) 
 
         return albumData;
     }
-    
+
     var albumData = {};
     albumData.getAlbumList = function(callback) {
         getAlbumTrackData()
@@ -71,10 +71,10 @@ define(["mopidy", "app/logger", "app/mopidy"], function(Mopidy, logger, mopidy) 
             .done(callback);
     };
 
-    albumData.getAlbumInfo = function(callback) {
+    albumData.getAlbumInfo = function(callback, albumUri) {
         getAlbumTrackData()
             .then(function(albumTrackData) {
-                return albumTrackData[params.albumUri];
+                return albumTrackData[albumUri];
             })
             .done(callback);
     };
