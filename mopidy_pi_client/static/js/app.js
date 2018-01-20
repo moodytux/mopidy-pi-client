@@ -16,7 +16,7 @@ requirejs.config({
     }
 });
 
-requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter) {
+requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter", "app/album-data"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter, albumData) {
     var ControlsState = {
       NOT_STARTED: "NOT_STARTED",
       PLAY_FINISHED: "PLAY_FINISHED",
@@ -35,17 +35,11 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
             $("#loading").show();
         } else if (screenName == 'album-and-category-list') {
             logger.log("About to send the user to the album list screen");
-            getAlbumTrackData()
-                .then(parseAlbumData)
-                .done(renderAlbumAndCategoryList);
+            albumData.getAlbumList(renderAlbumAndCategoryList);
 
         } else if (screenName == "album-info") {
             logger.log("About to send the user to the album info screen, with URI", params.albumUri);
-            getAlbumTrackData()
-                .then(function(albumTrackData) {
-                    return albumTrackData[params.albumUri];
-                })
-                .done(renderAlbumInfo);
+            albumData.getAlbumInfo(renderAlbumInfo);
         }
     }
 
@@ -297,59 +291,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
         }
     }
 
-    /*
-     * Domain based data manipulation methods.
-     */
-
-    // Returns a promise with albumTrackData.
-    var getAlbumTrackData = function() {
-        // If we need to, first fetch the album track data.
-        if (typeof albumTrackData === 'undefined') {
-            logger.log("Fetching album track data");
-            albumTrackData = [];
-
-            return getAlbumUris()
-                .then(lookupAlbumUris)
-                .then(function(data) {
-                    albumTrackData = data;
-                    return albumTrackData;
-                });
-        } else {
-            // Return a promise with the data.
-            logger.log("Already got data");
-            return Mopidy.when(albumTrackData);
-        }
-    }
-
-    // Returns a promise with album URIs.
-    var getAlbumUris = function() {
-        // If we need to, fetch the album refs.
-        if (typeof albumUris === 'undefined') {
-            albumUris = [];
-            return mopidy.library.browse("local:directory?type=album")
-                .then(function(albumRefs) {
-                    if (albumRefs) {
-                        // Loop through the album refs, storing the uri for each.
-                        $.each(albumRefs, function(index, albumRef) {
-                            albumUris.push(albumRef.uri);
-                        });
-                    }
-                    return albumUris;
-                });
-        } else {
-            // Return a promise with the data.
-            logger.log("Already got album URIs");
-            return Mopidy.when(albumUris);
-        }
-    }
-
-    var lookupAlbumUris = function(albumUris) {
-        logger.log("About to lookup album URIs", albumUris);
-
-        // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
-        return mopidy.library.lookup(null, albumUris);
-    }
-
     var playTracks = function(tracks) {
         logger.log("About to add tracks to playlist and play first", tracks);
         mopidy.tracklist.clear()
@@ -409,21 +350,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
         return isValid;
     }
 
-    var parseAlbumData = function(albumTrackData) {
-        logger.log("Parsing album data from albumTrackData", albumTrackData);
-        var albumData = [];
-        if (albumTrackData) {
-            $.each(albumTrackData, function(index, trackObjs) {
-                if (trackObjs.length > 0) {
-                    var album = trackObjs[0].album;
-                    album.genre = trackObjs[0].genre;
-                    albumData.push(album);
-                }
-            });
-        }
-
-        return albumData;
-    }
 
     /*
      * JQuery document ready, where things start.
