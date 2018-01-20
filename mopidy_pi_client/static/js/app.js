@@ -16,7 +16,7 @@ requirejs.config({
     }
 });
 
-requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter", "app/album-data"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter, albumData) {
+requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter", "app/album-data", "app/controls"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter, albumData, controls) {
     var ControlsState = {
       NOT_STARTED: "NOT_STARTED",
       PLAY_FINISHED: "PLAY_FINISHED",
@@ -206,26 +206,26 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
             // Set up the controls click listeners.
             $("#album-info .controls .play").click(function() {
                 if ($(this).hasClass("enabled")) {
-                    play();
+                    controls.play();
                 }
             });
             $("#album-info .controls .pause").click(function() {
                 if ($(this).hasClass("enabled")) {
-                    pause();
+                    controls.pause();
                 }
             });
             $("#album-info .controls .previous").click(function() {
                 if ($(this).hasClass("enabled")) {
-                    playPrevious();
+                    controls.playPrevious();
                 }
             });
             $("#album-info .controls .next").click(function() {
                 if ($(this).hasClass("enabled")) {
-                    playNext();
+                    controls.playNext();
                 }
             });
             $("#album-info .controls .back").click(function() {
-                stop();
+                controls.stop();
                 showScreen("album-and-category-list");
             });
 
@@ -302,31 +302,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
                     mopidy.playback.play(tlTracks[0]);
                 }
             });
-    }
-
-    var playPrevious = function() {
-        logger.log("Play previous track");
-        mopidy.playback.previous();
-    }
-
-    var playNext = function() {
-        logger.log("Play next track");
-        mopidy.playback.next();
-    }
-
-    var play = function() {
-        mopidy.playback.play();
-    }
-
-    var pause = function() {
-        logger.log("Pausing current track");
-        mopidy.playback.pause();
-    }
-
-    var stop = function() {
-        logger.log("Stopping playback");
-        mopidy.playback.stop();
-        mopidy.tracklist.clear();
     }
 
     var isAlbumDataValid = function(album) {
