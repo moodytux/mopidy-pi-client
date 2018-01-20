@@ -55,7 +55,7 @@ define(["mopidy", "app/logger", "app/mopidy"], function(Mopidy, logger, mopidy) 
             $.each(albumTrackData, function(index, trackObjs) {
                 if (trackObjs.length > 0) {
                     var album = trackObjs[0].album;
-                    album.genre = trackObjs[0].genre;
+                    album.genre = trackObjs[0].genre;//todo fix me (manipulating the album here doesnt end well)
                     albumData.push(album);
                 }
             });
