@@ -16,7 +16,7 @@ requirejs.config({
     }
 });
 
-requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger"], function($, coverflowjs, bootstrap, Mopidy, logger) {
+requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter) {
     var ControlsState = {
       NOT_STARTED: "NOT_STARTED",
       PLAY_FINISHED: "PLAY_FINISHED",
@@ -134,7 +134,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger"], functi
         $('#album-and-category-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
 
         // Sort the album data by artist and add to coverflow.
-        albums.sort(sortAlbumDataByArtist);
+        albums.sort(albumSorter.byArtist);
         if (albums != null) {
             $.each(albums, function(index, album) {
                 if (isAlbumDataValid(album)) {
@@ -167,7 +167,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger"], functi
         $('#album-and-category-list div.categoryflow').replaceWith($("<div/>").addClass("categoryflow"));
 
         // Sort the album data by genre and add to category flow.
-        albums.sort(sortAlbumDataByGenre);
+        albums.sort(albumSorter.byGenre);
         if (albums != null) {
             $.each(albums, function(index, album) {
                 if (isAlbumDataValid(album)) {
@@ -423,66 +423,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger"], functi
         }
 
         return albumData;
-    }
-
-    var sortAlbumDataByArtist = function(left, right) {
-        logger.log("Sorting album data by artist");
-
-        var SortOrder = {
-          LEFT_FIRST: -1,
-          RIGHT_FIRST: 1,
-          SAME: 0,
-        };
-
-        if (typeof(left.artists) === "undefined") {
-            result = SortOrder.RIGHT_FIRST;
-        } else if (typeof(right.artists) === "undefined") {
-            result = SortOrder.LEFT_FIRST;
-        } else {
-            var leftName = left.artists[0].name.toLowerCase();
-            var rightName = right.artists[0].name.toLowerCase();
-
-            var result;
-            if (leftName < rightName) {
-                result = SortOrder.LEFT_FIRST;
-            } else if (leftName > rightName) {
-                result = SortOrder.RIGHT_FIRST;
-            } else {
-                result = SortOrder.SAME;
-            }
-        }
-
-        return result;
-    }
-
-    var sortAlbumDataByGenre = function(left, right) {
-        logger.log("Sorting album data by genre");
-
-        var SortOrder = {
-          LEFT_FIRST: -1,
-          RIGHT_FIRST: 1,
-          SAME: 0,
-        };
-
-        if (typeof(left.genre) === "undefined") {
-            result = SortOrder.RIGHT_FIRST;
-        } else if (typeof(right.genre) === "undefined") {
-            result = SortOrder.LEFT_FIRST;
-        } else {
-            var leftName = left.genre.toLowerCase();
-            var rightName = right.genre.toLowerCase();
-
-            var result;
-            if (leftName < rightName) {
-                result = SortOrder.LEFT_FIRST;
-            } else if (leftName > rightName) {
-                result = SortOrder.RIGHT_FIRST;
-            } else {
-                result = SortOrder.SAME;
-            }
-        }
-
-        return result;
     }
 
     /*
