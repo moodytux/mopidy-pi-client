@@ -74,7 +74,7 @@ To develop on mopidy-pi-client, there is a ready made Vagrantfile and Ansible pl
     cd <repo_path>/vagrant
     vagrant up
 
-- See your environment in a browser by going to http://192.168.33.10/pi-music/html/
+- See your environment in a browser by going to http://192.168.33.10:6680/pi-client/html/
 - Run the unit tests by typing in a terminal::
 
     cd <repo_path>/vagrant
