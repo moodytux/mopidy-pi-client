@@ -3,19 +3,32 @@
   become: yes
   apt: pkg={{ item }} state=latest
   with_items:
-    - mopidy
-    - npm
-    - nodejs-legacy
+  - mopidy
+  - npm
+  - nodejs-legacy
 
 - name: Give the mopidy user a shell
   become: yes
   user: name=mopidy shell=/bin/bash
 
-- name: Install qunit package globally
+- name: Add the node modules path to the mopidy users bash profile
   become: yes
-  npm:
-    name: qunit
-    global: yes
+  become_user: mopidy
+  blockinfile:
+    path: /var/lib/mopidy/.bash_profile
+    create: yes
+    block: |
+      export NODE_PATH="/usr/local/lib/node_modules"
+
+- name: Install testing packages globally
+  become: yes
+  npm: name={{ item }} global=yes
+  with_items:
+  - amdefine
+  - requirejs
+  - mocha
+  - testdouble
+  - squirejs
 
 - name: Install all required mopidy extensions
   become: yes
