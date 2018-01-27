@@ -6,10 +6,13 @@ describe('logger.js', function() {
     before(function() {
         mockconsole = {}
         mockconsole.log = helper.td.function('.log');
-        helper.squire.mock('console', mockconsole);
+        helper.squire.mock('app/console', mockconsole);
     });
     beforeEach(function() {
         helper.td.reset();
+    });
+    after(function() {
+        helper.squire.clean();
     });
     describe('log', function() {
         it('when just a string is given we should log it', helper.squire.run(['app/logger'], function(logger) {

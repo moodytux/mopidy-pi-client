@@ -1,4 +1,4 @@
-define(["console"], function(console) {
+define(["app/console"], function(console) {
     var logger = {};
     logger.log = function(message, obj) {
         if (typeof obj !== 'undefined') {
