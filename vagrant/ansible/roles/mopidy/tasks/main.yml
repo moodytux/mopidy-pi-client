@@ -29,6 +29,7 @@
   - mocha
   - testdouble
   - squirejs
+  - when
 
 - name: Install all required mopidy extensions
   become: yes

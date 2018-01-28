@@ -5,7 +5,9 @@ define(["app/logger", "app/mopidy"], function(logger, mopidy) {
         logger.log("About to add tracks to playlist and play first", tracks);
         mopidy.tracklist.clear()
             .then(function() {
-                return mopidy.tracklist.add(tracks);
+                if (tracks && (tracks.length > 0)) {
+                    return mopidy.tracklist.add(tracks);
+                }
             })
             .done(function(tlTracks) {
                 if (tlTracks && (tlTracks.length > 0)) {
