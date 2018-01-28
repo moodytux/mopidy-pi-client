@@ -2,6 +2,7 @@ var requirejs = require('../mopidy_pi_client/static/js/test/requirejs.js');
 var helper = requirejs('test/helper');
 var td = helper.td;
 var squire = helper.squire;
+var assert = helper.assert;
 
 describe('album-sorter.js', function() {
     var mocklogger;
@@ -130,16 +131,16 @@ describe('album-sorter.js', function() {
     var assertSame = function(algorithm, left, right) {
         var result = algorithm(left, right);
 
-        helper.assert.equal(result, albumSorter.SortOrder.SAME);
+        assert.equal(result, albumSorter.SortOrder.SAME);
     };
     var assertLeftFirst = function(algorithm, left, right) {
         var result = algorithm(left, right);
 
-        helper.assert.equal(result, albumSorter.SortOrder.LEFT_FIRST);
+        assert.equal(result, albumSorter.SortOrder.LEFT_FIRST);
     };
     var assertRightFirst = function(algorithm, left, right) {
         var result = algorithm(left, right);
 
-        helper.assert.equal(result, albumSorter.SortOrder.RIGHT_FIRST);
+        assert.equal(result, albumSorter.SortOrder.RIGHT_FIRST);
     };
 });

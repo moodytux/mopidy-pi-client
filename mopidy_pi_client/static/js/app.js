@@ -16,7 +16,7 @@ requirejs.config({
     }
 });
 
-requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter", "app/album-data", "app/controls"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter, albumData, controls) {
+requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/album-sorter", "app/album-data", "app/controls", "app/album-validator"], function($, coverflowjs, bootstrap, Mopidy, logger, albumSorter, albumData, controls, albumValidator) {
     var ControlsState = {
       NOT_STARTED: "NOT_STARTED",
       PLAY_FINISHED: "PLAY_FINISHED",
@@ -131,7 +131,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
         albums.sort(albumSorter.byArtist);
         if (albums != null) {
             $.each(albums, function(index, album) {
-                if (isAlbumDataValid(album)) {
+                if (albumValidator.isValid(album)) {
                     $("<div/>")
                         .css("background-image", "url(" + album.images[0] + ")")
                         .addClass("cover")
@@ -164,7 +164,7 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
         albums.sort(albumSorter.byGenre);
         if (albums != null) {
             $.each(albums, function(index, album) {
-                if (isAlbumDataValid(album)) {
+                if (albumValidator.isValid(album)) {
                     // If this is the first category, setup our list.
                     if (typeof categorySeenList === "undefined") {
                         categorySeenList = [];
@@ -290,28 +290,6 @@ requirejs(["jquery", "coverflowjs", "bootstrap", "mopidy", "app/logger", "app/al
             }
         }
     }
-
-    var isAlbumDataValid = function(album) {
-        var isValid = true;
-
-        if ((typeof(album.images) === "undefined") || (album.images.length < 1)) {
-            logger.log("Missing album image for album", album);
-            isValid = false;
-        }
-
-        if ((typeof(album.artists) === "undefined")) {
-            logger.log("Missing artists for album", album);
-            isValid = false;
-        }
-
-        if ((typeof(album.genre) === "undefined")) {
-            logger.log("Missing genre for album", album);
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
 
     /*
      * JQuery document ready, where things start.
