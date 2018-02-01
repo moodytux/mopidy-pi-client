@@ -1,4 +1,6 @@
 define(["app/logger"], function(logger) {
+    logger.log("In album-validator.js")
+
     var albumValidator = {
         isValid: function(album) {
             var isValid = true;

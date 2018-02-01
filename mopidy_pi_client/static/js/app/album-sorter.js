@@ -1,4 +1,6 @@
 define(["app/logger"], function(logger) {
+    logger.log("In album-sorter.js")
+
     var albumSorter = {
         SortOrder: {
             LEFT_FIRST: -1,

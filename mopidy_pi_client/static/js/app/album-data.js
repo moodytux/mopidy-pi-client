@@ -1,4 +1,7 @@
-define(["mopidy", "app/logger", "app/mopidy"], function(Mopidy, logger, mopidy) {
+define(["mopidy", "app/logger", "app/mopidy-container"], function(Mopidy, logger, mopidyContainer) {
+    logger.log("In album-data.js")
+    var mopidy = mopidyContainer.getInstance();
+
     // Returns a promise with albumTrackData.
     var getAlbumTrackData = function() {
         // If we need to, first fetch the album track data.

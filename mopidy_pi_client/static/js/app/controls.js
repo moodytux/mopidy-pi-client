@@ -1,4 +1,7 @@
-define(["app/logger", "app/mopidy"], function(logger, mopidy) {
+define(["app/logger", "app/mopidy-container"], function(logger, mopidyContainer) {
+    logger.log("In controls.js")
+
+    var mopidy = mopidyContainer.getInstance();
     var controls = {};
 
     controls.playTracks = function(tracks) {
