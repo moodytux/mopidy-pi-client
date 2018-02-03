@@ -37,15 +37,15 @@ define(["app/logger"], function(logger) {
         byArtist: function(left, right) {
             logger.log("Sorting album data by artist");
 
-            if ((typeof(left.artists) === "undefined") && (typeof(right.artists) === "undefined")) {
+            if ((typeof(left.artist) === "undefined") && (typeof(right.artist) === "undefined")) {
                 result = albumSorter.SortOrder.SAME;
-            } else if (typeof(left.artists) === "undefined") {
+            } else if (typeof(left.artist) === "undefined") {
                 result = albumSorter.SortOrder.RIGHT_FIRST;
-            } else if (typeof(right.artists) === "undefined") {
+            } else if (typeof(right.artist) === "undefined") {
                 result = albumSorter.SortOrder.LEFT_FIRST;
             } else {
-                var leftName = left.artists[0].name.toLowerCase();
-                var rightName = right.artists[0].name.toLowerCase();
+                var leftName = left.artist.toLowerCase();
+                var rightName = right.artist.toLowerCase();
 
                 var result;
                 if (leftName < rightName) {

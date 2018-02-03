@@ -70,60 +70,44 @@ describe('album-sorter.js', function() {
     describe('byArtist', function() {
         it('when two tracks are provided, out of artist order, order is reversed', function() {
             assertRightFirst(albumSorter.byArtist, {
-                artists: [{
-                    name: "U2"
-                }]
+                artist: "U2"
             }, {
-                artists: [{
-                    name: "Ash"
-                }]
+                artist: "Ash"
             });
         });
         it('when two tracks are provided, artist in order, order is maintained', function() {
             assertLeftFirst(albumSorter.byArtist, {
-                artists: [{
-                    name: "Ash"
-                }]
+                artist: "Ash"
             }, {
-                artists: [{
-                    name: "U2"
-                }]
+                artist: "U2"
             });
         });
         it('when two tracks are provided with the same artist, we report they are the same', function() {
             assertSame(albumSorter.byArtist, {
-                artists: [{
-                    name: "U2"
-                }]
+                artist: "U2"
             }, {
-                artists: [{
-                    name: "u2"
-                }]
+                artist: "u2"
             });
         });
         it('when the first track is provided, this comes first', function() {
             assertLeftFirst(albumSorter.byArtist, {
-                artists: [{
-                    name: "U2"
-                }]
+                artist: "U2"
             }, {
-                artists: undefined
+                artist: undefined
             });
         });
         it('when the second track is provided, this comes first', function() {
             assertRightFirst(albumSorter.byArtist, {
-                artists: undefined
+                artist: undefined
             }, {
-                artists: [{
-                    name: "Ash"
-                }]
+                artist: "Ash"
             });
         });
         it('when no tracks are provided, they should be reported as the same', function() {
             assertSame(albumSorter.byArtist, {
-                artists: undefined
+                artist: undefined
             }, {
-                artists: undefined
+                artist: undefined
             });
         });
     });
