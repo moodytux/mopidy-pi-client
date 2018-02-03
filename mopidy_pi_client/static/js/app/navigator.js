@@ -13,11 +13,13 @@ define(["app/logger", "app/album-data", "app/album-list-screen", "app/album-info
         },
         showAlbumListScreen: function() {
             logger.log("About to send the user to the album list screen");
-            albumData.getAlbumList(albumListScreen.render);
+            albumData.getAlbumList()
+                .done(albumListScreen.render);
         },
         showAlbumInfoScreen: function(albumUri) {
             logger.log("About to send the user to the album info screen, with URI", albumUri);
-            albumData.getAlbumInfo(albumInfoScreen.render, albumUri);
+            albumData.getAlbumInfo(albumUri)
+                .done(albumInfoScreen.render);
         }
     };
     albumListScreen.setNavigateToAlbumCallback(navigator.showAlbumInfoScreen);

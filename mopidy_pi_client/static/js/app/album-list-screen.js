@@ -1,4 +1,4 @@
-define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter", "app/album-validator"], function($, coverflowjs, bootstrap, logger, albumSorter, albumValidator) {
+define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"], function($, coverflowjs, bootstrap, logger, albumSorter) {
     logger.log("In album-list-screen.js")
     var albumListScreen = {
         navigateToAlbumCallback: null,
@@ -28,19 +28,17 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter", 
             albums.sort(albumSorter.byArtist);
             if (albums != null) {
                 $.each(albums, function(index, album) {
-                    if (albumValidator.isValid(album)) {
-                        $("<div/>")
-                            .css("background-image", "url(" + album.images[0] + ")")
-                            .addClass("cover")
-                            .attr("data-piclient-albumname", album.name)
-                            .attr("data-piclient-albumartist", album.artists[0].name)
-                            .click(function() {
-                                if($(this).hasClass('ui-state-active')) {
-                                    navigateToAlbumCallback(album.uri);
-                                }
-                            })
-                            .appendTo($("#album-and-category-list div.coverflow"));
-                    }
+                    $("<div/>")
+                        .css("background-image", "url(" + album.image + ")")
+                        .addClass("cover")
+                        .attr("data-piclient-albumname", album.name)
+                        .attr("data-piclient-albumartist", album.artist)
+                        .click(function() {
+                            if ($(this).hasClass('ui-state-active')) {
+                                navigateToAlbumCallback(album.uri);
+                            }
+                        })
+                        .appendTo($("#album-and-category-list div.coverflow"));
                 });
             }
 
@@ -60,28 +58,26 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter", 
             albums.sort(albumSorter.byGenre);
             if (albums != null) {
                 $.each(albums, function(index, album) {
-                    if (albumValidator.isValid(album)) {
-                        // If this is the first category, setup our list.
-                        if (typeof categorySeenList === "undefined") {
-                            categorySeenList = [];
-                        }
+                    // If this is the first category, setup our list.
+                    if (typeof categorySeenList === "undefined") {
+                        categorySeenList = [];
+                    }
 
-                        // If this is the first time we've seen this category, add it to our seen list and
-                        // all to the category flow.
-                        if (categorySeenList.indexOf(album.genre) == -1) {
-                            categorySeenList.push(album.genre);
+                    // If this is the first time we've seen this category, add it to our seen list and
+                    // all to the category flow.
+                    if (categorySeenList.indexOf(album.genre) == -1) {
+                        categorySeenList.push(album.genre);
 
-                            logger.log("Adding genre", album.genre);
-                            $("<div/>")
-                                .addClass("category")
-                                .text(album.genre)
-                                .click(function() {
-                                    if($(this).hasClass('ui-state-active')) {
-                                        console.log("Just clicked " + album.genre);
-                                    }
-                                })
-                                .appendTo($("#album-and-category-list div.categoryflow"));
-                        }
+                        logger.log("Adding genre", album.genre);
+                        $("<div/>")
+                            .addClass("category")
+                            .text(album.genre)
+                            .click(function() {
+                                if ($(this).hasClass('ui-state-active')) {
+                                    console.log("Just clicked " + album.genre);
+                                }
+                            })
+                            .appendTo($("#album-and-category-list div.categoryflow"));
                     }
                 });
             }
