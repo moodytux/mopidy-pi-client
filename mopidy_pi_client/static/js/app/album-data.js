@@ -1,4 +1,4 @@
-define(["mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], function(Mopidy, logger, mopidyContainer, albumMapper) {
+define(["jquery", "mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], function($, Mopidy, logger, mopidyContainer, albumMapper) {
     logger.log("In album-data.js")
     var mopidy = mopidyContainer.getInstance();
 

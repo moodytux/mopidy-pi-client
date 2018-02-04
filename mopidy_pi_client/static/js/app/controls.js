@@ -1,5 +1,5 @@
 define(["app/logger", "app/mopidy-container"], function(logger, mopidyContainer) {
-    logger.log("In controls.js")
+    logger.log("In controls.js");
 
     var mopidy = mopidyContainer.getInstance();
     var controls = {};
