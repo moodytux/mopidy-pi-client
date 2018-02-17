@@ -29,7 +29,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                 albums.forEach(function(album, index) {
                     $("<div/>")
                         .css("background-image", "url(" + album.image + ")")
-                        .addClass("cover")
+                        .addClass("cover disable-select")
                         .attr("data-piclient-albumname", album.name)
                         .attr("data-piclient-albumartist", album.artist)
                         .click(function() {
@@ -58,7 +58,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                     if (typeof(album.category.name) !== "undefined") {
                         logger.log("Adding category", album.category.name);
                         $("<div/>")
-                            .addClass("category")
+                            .addClass("category disable-select")
                             .text(album.category.name)
                             .click(function() {
                                 $('.coverflow').coverflow('select', index);

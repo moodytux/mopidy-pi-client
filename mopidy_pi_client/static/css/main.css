@@ -21,6 +21,13 @@ section {
   height: 100%;
 }
 
+.disable-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 /**
  * JQuery mobile fixes
  */
@@ -71,7 +78,7 @@ section#album-and-category-list .categoryflow-container {
 section#album-and-category-list .category {
   width: 100px;  /* coverflowjs seems to want a set width */
   height: 50px;
-  line-height: 50px;
+  line-height: 48px;
   font-size: 25px;
   text-align: center;
   border-radius: 30px;
