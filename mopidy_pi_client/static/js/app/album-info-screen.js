@@ -25,6 +25,7 @@ define(["jquery", "app/logger", "app/controls", "app/mopidy-container"], functio
                         .addClass("list-group-item")
                         .addClass("track")
                         .addClass("track-" + track.track_no)
+                        .addClass("disable-select")
                         .click(function() {
                             controls.playTracks(tracks.slice(index));
                         })
