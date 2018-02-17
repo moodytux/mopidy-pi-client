@@ -14,13 +14,13 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"],
 
             // Fill our coverflow if we haven't done so already.
             if (typeof initialisedCoverflow === "undefined") {
-                albumListScreen.renderCoverList(albums);
-                albumListScreen.renderCategoryList(albums);
+                albumListScreen._renderCoverList(albums);
+                albumListScreen._renderCategoryList(albums);
 
                 initialisedCoverflow = true;
             }
         },
-        renderCoverList: function(albums) {
+        _renderCoverList: function(albums) {
             // Reinitialise the list screen.
             $('#album-and-category-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
 
@@ -50,7 +50,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"],
                 }
             });
         },
-        renderCategoryList: function(albums) {
+        _renderCategoryList: function(albums) {
             // Reinitialise the list screen.
             $('#album-and-category-list div.categoryflow').replaceWith($("<div/>").addClass("categoryflow"));
 
