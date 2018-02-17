@@ -69,11 +69,13 @@ section#album-and-category-list .categoryflow-container {
 }
 
 section#album-and-category-list .category {
-  width: 200px;  /* coverflowjs seems to want a set width */
+  width: 100px;  /* coverflowjs seems to want a set width */
   height: 50px;
   line-height: 50px;
   font-size: 25px;
   text-align: center;
+  border-radius: 30px;
+  border: 2px solid #ddd;
   background-color: #fff;
 }
 
@@ -154,7 +156,7 @@ section#album-info .track-list .title {
   padding-left: 20px;
 }
 
-section#album-info .track-list a.playing, 
+section#album-info .track-list a.playing,
 section#album-info .track-list a.paused {
   background-color: #ddd;
 }
@@ -280,4 +282,3 @@ section#album-info .controls .next.enabled .icon,
 section#album-info .controls .next.enabled .icon2 {
   border-color: transparent #000 transparent #000;
 }
-

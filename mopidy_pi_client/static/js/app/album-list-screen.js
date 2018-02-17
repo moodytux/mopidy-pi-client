@@ -70,7 +70,10 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
 
             // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
             // the display none has been removed.
-            $(".categoryflow").coverflow();
+            $(".categoryflow").coverflow({
+                overlap: 0,
+                angle: 0
+            });
         }
     };
     return albumListScreen;
