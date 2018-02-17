@@ -46,11 +46,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
 
             // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
             // the display none has been removed.
-            $(".coverflow").coverflow({
-                select: function(event, ui) {
-                    console.log(ui);
-                }
-            });
+            $(".coverflow").coverflow();
         },
         _renderCategoryList: function(albums) {
             // Reinitialise the list screen.
@@ -59,7 +55,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
             // Add the album categories to category flow.
             if (albums != null) {
                 albums.forEach(function(album, index) {
-                    if (typeof(album.category) !== "undefined") {
+                    if (typeof(album.category.name) !== "undefined") {
                         logger.log("Adding category", album.category.name);
                         $("<div/>")
                             .addClass("category")
@@ -74,11 +70,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
 
             // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
             // the display none has been removed.
-            $(".categoryflow").coverflow({
-                select: function(event, ui) {
-                    console.log(ui);
-                }
-            });
+            $(".categoryflow").coverflow();
         }
     };
     return albumListScreen;

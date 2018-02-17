@@ -15,16 +15,18 @@ define(["app/logger", "app/album-sorter"], function(logger, albumSorter) {
             if (albums != null) {
                 var categorySeenList = [];
                 albums.forEach(function(album, index) {
-                    // If this is the first album we've seen of this category, put the category
-                    // in this first album and add it to our seen list.
+                    album.category = {};
                     var category = albumToCategoryMapper(album);
+
+                    // If this is the first album we've seen of this category, put the category
+                    // name in this first album and add it to our seen list.
                     if (categorySeenList.indexOf(category) == -1) {
-                        album.category = {
-                            name: category,
-                            index: categorySeenList.length
-                        };
+                        album.category.name = category;
                         categorySeenList.push(category);
                     }
+
+                    // Store the common category index.
+                    album.category.index = categorySeenList.length - 1;
                 });
             }
             return albums;

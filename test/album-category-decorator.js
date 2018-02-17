@@ -26,7 +26,7 @@ describe('album-category-decorator.js', function() {
             var result = albumCategoryDecorator.decorateByArtist(albums);
             assert.equal(result, albums);
         }));
-        it('when given albums with no artist, returns albums with one empty category', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
+        it('when given albums with no artist, returns albums with one empty category name', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
             var albums = [{
                 artist: ""
             }, {
@@ -39,8 +39,10 @@ describe('album-category-decorator.js', function() {
 
             assert.equal(result[0].category.name, "");
             assert.equal(result[0].category.index, 0);
-            assert.equal(result[1].category, undefined);
-            assert.equal(result[2].category, undefined);
+            assert.equal(result[1].category.name, undefined);
+            assert.equal(result[1].category.index, 0);
+            assert.equal(result[2].category.name, undefined);
+            assert.equal(result[1].category.index, 0);
         }));
         it('when given albums, at minimum same data should be returned and sort called', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
             var albums = [{
@@ -59,7 +61,7 @@ describe('album-category-decorator.js', function() {
             assert.equal(result[1].artist, albums[1].artist);
             assert.equal(result[2].artist, albums[2].artist);
         }));
-        it('when given albums of same artist, return with single category on first album', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
+        it('when given albums of same artist, return with single category name on first album', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
             var albums = [{
                 artist: "U2"
             }, {
@@ -72,10 +74,12 @@ describe('album-category-decorator.js', function() {
 
             assert.equal(result[0].category.name, "U");
             assert.equal(result[0].category.index, 0);
-            assert.equal(result[1].category, undefined);
-            assert.equal(result[2].category, undefined);
+            assert.equal(result[1].category.name, undefined);
+            assert.equal(result[1].category.index, 0);
+            assert.equal(result[2].category.name, undefined);
+            assert.equal(result[2].category.index, 0);
         }));
-        it('when given albums of different artists, return with category on first seen album', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
+        it('when given albums of different artists, return with category name on first seen album', squire.run(['app/album-category-decorator'], function(albumCategoryDecorator) {
             var albums = [{
                 artist: "Foo Fighters"
             }, {
@@ -100,18 +104,24 @@ describe('album-category-decorator.js', function() {
 
             assert.equal(result[0].category.name, "F");
             assert.equal(result[0].category.index, 0);
-            assert.equal(result[1].category, undefined);
-            assert.equal(result[2].category, undefined);
+            assert.equal(result[1].category.name, undefined);
+            assert.equal(result[1].category.index, 0);
+            assert.equal(result[2].category.name, undefined);
+            assert.equal(result[2].category.index, 0);
 
             assert.equal(result[3].category.name, "U");
             assert.equal(result[3].category.index, 1);
-            assert.equal(result[4].category, undefined);
+            assert.equal(result[4].category.name, undefined);
+            assert.equal(result[4].category.index, 1);
 
             assert.equal(result[5].category.name, "W");
             assert.equal(result[5].category.index, 2);
-            assert.equal(result[6].category, undefined);
-            assert.equal(result[7].category, undefined);
-            assert.equal(result[8].category, undefined);
+            assert.equal(result[6].category.name, undefined);
+            assert.equal(result[6].category.index, 2);
+            assert.equal(result[7].category.name, undefined);
+            assert.equal(result[7].category.index, 2);
+            assert.equal(result[8].category.name, undefined);
+            assert.equal(result[8].category.index, 2);
         }));
     });
 });
