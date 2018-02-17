@@ -1,4 +1,4 @@
-define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"], function($, coverflowjs, bootstrap, logger, albumSorter) {
+define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverflowjs, bootstrap, logger) {
     logger.log("In album-list-screen.js")
     var albumListScreen = {
         navigateToAlbumCallback: null,
@@ -24,10 +24,9 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"],
             // Reinitialise the list screen.
             $('#album-and-category-list div.coverflow').replaceWith($("<div/>").addClass("coverflow"));
 
-            // Sort the album data by artist and add to coverflow.
-            albums.sort(albumSorter.byArtist);
+            // Add the album covers to coverflow.
             if (albums != null) {
-                $.each(albums, function(index, album) {
+                albums.forEach(function(album, index) {
                     $("<div/>")
                         .css("background-image", "url(" + album.image + ")")
                         .addClass("cover")
@@ -36,6 +35,9 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"],
                         .click(function() {
                             if ($(this).hasClass('ui-state-active')) {
                                 navigateToAlbumCallback(album.uri);
+                            }
+                            if (typeof(album.category) !== "undefined") {
+                                $('.categoryflow').coverflow('select', album.category.index);
                             }
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));
@@ -54,28 +56,16 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/album-sorter"],
             // Reinitialise the list screen.
             $('#album-and-category-list div.categoryflow').replaceWith($("<div/>").addClass("categoryflow"));
 
-            // Sort the album data by genre and add to category flow.
-            albums.sort(albumSorter.byGenre);
+            // Add the album categories to category flow.
             if (albums != null) {
-                $.each(albums, function(index, album) {
-                    // If this is the first category, setup our list.
-                    if (typeof categorySeenList === "undefined") {
-                        categorySeenList = [];
-                    }
-
-                    // If this is the first time we've seen this category, add it to our seen list and
-                    // all to the category flow.
-                    if (categorySeenList.indexOf(album.genre) == -1) {
-                        categorySeenList.push(album.genre);
-
-                        logger.log("Adding genre", album.genre);
+                albums.forEach(function(album, index) {
+                    if (typeof(album.category) !== "undefined") {
+                        logger.log("Adding category", album.category.name);
                         $("<div/>")
                             .addClass("category")
-                            .text(album.genre)
+                            .text(album.category.name)
                             .click(function() {
-                                if ($(this).hasClass('ui-state-active')) {
-                                    console.log("Just clicked " + album.genre);
-                                }
+                                $('.coverflow').coverflow('select', index);
                             })
                             .appendTo($("#album-and-category-list div.categoryflow"));
                     }

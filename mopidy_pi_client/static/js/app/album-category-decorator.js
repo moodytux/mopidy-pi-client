@@ -1,4 +1,5 @@
 define(["app/logger", "app/album-sorter"], function(logger, albumSorter) {
+    logger.log("In album-category-decorator.js");
     var decorator = {
         decorateByArtist: function(albums) {
             return decorator._decorate(albums, albumSorter.byArtist, function(album) {

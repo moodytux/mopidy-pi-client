@@ -1,4 +1,4 @@
-define(["app/logger", "app/album-data", "app/album-list-screen", "app/album-info-screen"], function(logger, albumData, albumListScreen, albumInfoScreen) {
+define(["app/logger", "app/album-data", "app/album-category-decorator", "app/album-list-screen", "app/album-info-screen"], function(logger, albumData, albumCategoryDecorator, albumListScreen, albumInfoScreen) {
     logger.log("In navigator.js")
     var navigator = {
         showOfflineScreen: function() {
@@ -14,6 +14,7 @@ define(["app/logger", "app/album-data", "app/album-list-screen", "app/album-info
         showAlbumListScreen: function() {
             logger.log("About to send the user to the album list screen");
             albumData.getAlbumList()
+                .then(albumCategoryDecorator.decorateByArtist)
                 .done(albumListScreen.render);
         },
         showAlbumInfoScreen: function(albumUri) {
