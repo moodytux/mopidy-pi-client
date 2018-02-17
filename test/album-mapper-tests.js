@@ -150,4 +150,22 @@ describe('album-mapper.js', function() {
             assert.deepEqual(albumMapper._map(tracks), expectedAlbum);
         });
     });
+    describe('_normaliseGenre', function() {
+        it('when we normalise a various artists album, the genre should be set to various', function() {
+            var album = {
+                artist: "Various artists",
+                genre: "Rock"
+            };
+            albumMapper._normaliseGenre(album);
+            assert.equal(album.genre, "Various");
+        });
+        it('when we normalise an album that isnt a various artists album, the 1st letter of each word in the genre should be uppercased', function() {
+            var album = {
+                artist: "U2",
+                genre: " alternAtive ROCK "
+            };
+            albumMapper._normaliseGenre(album);
+            assert.equal(album.genre, "Alternative Rock");
+        });
+    });
 });

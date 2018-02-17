@@ -1,10 +1,12 @@
-define(["app/logger"], function(logger) {
+define(["app/logger", "app/word-helper"], function(logger, wordHelper) {
     logger.log("In album-mapper.js")
 
     var albumMapper = {
         trackListToAlbum: function(trackArray) {
             if (albumMapper._isValid(trackArray)) {
-                return albumMapper._map(trackArray);
+                var album = albumMapper._map(trackArray);
+                albumMapper._normaliseGenre(album);
+                return album;
             } else {
                 return null;
             }
@@ -46,6 +48,13 @@ define(["app/logger"], function(logger) {
                 genre: trackArray[0].genre,
                 uri: trackAlbum.uri
             };
+        },
+        _normaliseGenre: function(album) {
+            if (album.artist.toLowerCase() == "various artists") {
+                album.genre = "Various";
+            } else {
+                album.genre = wordHelper.uppercaseFirstLetterPerWord(album.genre);
+            }
         }
     };
     return albumMapper;
