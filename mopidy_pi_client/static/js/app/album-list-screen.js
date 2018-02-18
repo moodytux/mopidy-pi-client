@@ -30,14 +30,10 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                     $("<div/>")
                         .css("background-image", "url(" + album.image + ")")
                         .addClass("cover disable-select")
-                        .attr("data-piclient-albumname", album.name)
-                        .attr("data-piclient-albumartist", album.artist)
+                        .attr("data-piclient-album-category-index", album.category.index)
                         .click(function() {
                             if ($(this).hasClass('ui-state-active')) {
                                 navigateToAlbumCallback(album.uri);
-                            }
-                            if (typeof(album.category) !== "undefined") {
-                                $('.categoryflow').coverflow('select', album.category.index);
                             }
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));
@@ -46,7 +42,13 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
 
             // Render as coverflow. Do this after showing the list section to fix an issue with coverflow so
             // the display none has been removed.
-            $(".coverflow").coverflow();
+            $(".coverflow").coverflow({
+                select: function(event, ui) {
+                    if (typeof initialisedCoverflow !== "undefined") {
+                        $('.categoryflow').coverflow('select', ui.active[0].dataset.piclientAlbumCategoryIndex);
+                    }
+                }
+            });
         },
         _renderCategoryList: function(albums) {
             // Reinitialise the list screen.
@@ -59,10 +61,8 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         logger.log("Adding category", album.category.name);
                         $("<div/>")
                             .addClass("category disable-select")
+                            .attr("data-piclient-album-index", index)
                             .text(album.category.name)
-                            .click(function() {
-                                $('.coverflow').coverflow('select', index);
-                            })
                             .appendTo($("#album-and-category-list div.categoryflow"));
                     }
                 });
@@ -72,7 +72,12 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
             // the display none has been removed.
             $(".categoryflow").coverflow({
                 overlap: 0,
-                angle: 0
+                angle: 0,
+                select: function(event, ui) {
+                    if (typeof initialisedCoverflow !== "undefined") {
+                        $('.coverflow').coverflow('select', ui.active[0].dataset.piclientAlbumIndex);
+                    }
+                }
             });
         }
     };
