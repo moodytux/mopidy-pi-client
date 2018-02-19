@@ -2,6 +2,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
     logger.log("In album-list-screen.js")
     var albumListScreen = {
         navigateToAlbumCallback: null,
+        _initialisedCoverflow: false,
         setNavigateToAlbumCallback: function(navigateToAlbumCallbackIn) {
             navigateToAlbumCallback = navigateToAlbumCallbackIn;
         },
@@ -13,11 +14,11 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
             $("#album-and-category-list").show();
 
             // Fill our coverflow if we haven't done so already.
-            if (typeof initialisedCoverflow === "undefined") {
+            if (!albumListScreen._initialisedCoverflow) {
                 albumListScreen._renderCoverList(albums);
                 albumListScreen._renderCategoryList(albums);
 
-                initialisedCoverflow = true;
+                albumListScreen._initialisedCoverflow = true;
             }
         },
         _renderCoverList: function(albums) {
@@ -44,8 +45,11 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
             // the display none has been removed.
             $(".coverflow").coverflow({
                 select: function(event, ui) {
-                    if (typeof initialisedCoverflow !== "undefined") {
-                        $('.categoryflow').coverflow('select', ui.active[0].dataset.piclientAlbumCategoryIndex);
+                    var newlySelectedCategoryIndex = ui.active[0].dataset.piclientAlbumCategoryIndex;
+                    if (albumListScreen._initialisedCoverflow &&
+                        !albumListScreen._isCurrentCategory(newlySelectedCategoryIndex)) {
+                        logger.log("Selecting category in categoryflow");
+                        $('.categoryflow').coverflow('select', newlySelectedCategoryIndex);
                     }
                 }
             });
@@ -62,6 +66,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         $("<div/>")
                             .addClass("category disable-select")
                             .attr("data-piclient-album-index", index)
+                            .attr("data-piclient-album-category-index", album.category.index)
                             .text(album.category.name)
                             .appendTo($("#album-and-category-list div.categoryflow"));
                     }
@@ -74,11 +79,31 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                 overlap: 0,
                 angle: 0,
                 select: function(event, ui) {
-                    if (typeof initialisedCoverflow !== "undefined") {
-                        $('.coverflow').coverflow('select', ui.active[0].dataset.piclientAlbumIndex);
+                    var newlySelectedCategoryIndex = ui.active[0].dataset.piclientAlbumCategoryIndex;
+                    if (albumListScreen._initialisedCoverflow &&
+                        !albumListScreen._isCurrentCoverInCategory(newlySelectedCategoryIndex)) {
+                        var firstAlbumForCategoryIndex = ui.active[0].dataset.piclientAlbumIndex;
+                        logger.log("Selecting first album in coverflow for category");
+                        $('.coverflow').coverflow('select', firstAlbumForCategoryIndex);
                     }
                 }
             });
+        },
+        _isCurrentCoverInCategory: function(categoryIndexToTest) {
+            var inCategory = false;
+            var currentCoverCategoryIndex = $("div.cover.ui-state-active")[0].dataset.piclientAlbumCategoryIndex;
+            if (currentCoverCategoryIndex == categoryIndexToTest) {
+                inCategory = true;
+            }
+            return inCategory;
+        },
+        _isCurrentCategory: function(categoryIndexToTest) {
+            var isCurrentCategory = false;
+            var currentCategoryIndex = $("div.category.ui-state-active")[0].dataset.piclientAlbumCategoryIndex;
+            if (currentCategoryIndex == categoryIndexToTest) {
+                isCurrentCategory = true;
+            }
+            return isCurrentCategory;
         }
     };
     return albumListScreen;
