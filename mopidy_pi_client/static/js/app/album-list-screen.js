@@ -1,10 +1,10 @@
 define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverflowjs, bootstrap, logger) {
     logger.log("In album-list-screen.js")
     var albumListScreen = {
-        navigateToAlbumCallback: null,
+        _navigateToAlbumCallback: null,
         _initialisedCoverflow: false,
         setNavigateToAlbumCallback: function(navigateToAlbumCallbackIn) {
-            navigateToAlbumCallback = navigateToAlbumCallbackIn;
+            _navigateToAlbumCallback = navigateToAlbumCallbackIn;
         },
         render: function(albums) {
             logger.log("About to render the following albums along with their categories", albums);
@@ -34,7 +34,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         .attr("data-piclient-album-category-index", album.category.index)
                         .click(function() {
                             if ($(this).hasClass('ui-state-active')) {
-                                navigateToAlbumCallback(album.uri);
+                                _navigateToAlbumCallback(album.uri);
                             }
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));
