@@ -102,6 +102,17 @@ Credits
 Changelog
 =========
 
+v0.2
+----------------------------------------
+
+- New category flow selector to allow scrolling to artists starting with a given letter. This is
+also linked to the cover flow selector so scrolling through covers changes the artist letter and
+similarly scrolling through letters scrolls to the first artists first cover. Written to be
+extensible for future category types such as genres.
+- Refactored all code to use requirejs, so everything is much more modular and maintainable.
+- Added a Vagrantfile to provide a working development environment, utilising Ansible for provisioning.
+- Added Mocha unit tests for most modules, runnable in the development environment.
+
 v0.1.1
 ----------------------------------------
 
