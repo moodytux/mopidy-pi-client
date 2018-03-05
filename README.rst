@@ -14,7 +14,7 @@ Mopidy-Pi-Client
    :target: https://coveralls.io/r/moodytux/mopidy-pi-client
    :alt: Test coverage
 
-Mopidy extension specifically for the Raspberry Pi Touchscreen
+Mopidy extension specifically for the Raspberry Pi Touchscreen. Developed and tested under Firefox running in fullscreen mode.
 
 
 Screenshots
@@ -55,7 +55,6 @@ Feature roadmap
 - Show track artist on a Various Artists album info screen
 - Show the elapsed time of current track as a progress bar
 - Look into possibility of removing cursor to be more touch friendly
-- Selecting albums by artist letter
 - Adding gesture support to the track list on the album info screen
 - Selecting albums by genre
 - Provide a refresh button for refreshing album list
@@ -102,7 +101,7 @@ Credits
 Changelog
 =========
 
-v0.2
+v0.2.0
 ----------------------------------------
 
 - New category flow selector to allow scrolling to artists starting with a given letter. This is also linked to the cover flow selector so scrolling through covers changes the artist letter and similarly scrolling through letters scrolls to the first artists first cover. Written to be extensible for future category types such as genres.
