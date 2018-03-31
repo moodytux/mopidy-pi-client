@@ -53,7 +53,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                 playbackState.setTrackListRenderer(albumInfoScreen.renderCurrentTrackDetails);
 
                 // Set the initial state to be not started.
-                playbackState.updateState(playbackState.EventName.NOT_STARTED, null, tracks);
+                playbackState.updateState(playbackState.EventName.NOT_STARTED);
 
                 // Hook in the mopidy events to our playback state so it is kept updated.
                 playbackState.associateWithMopidyEvents();
@@ -110,7 +110,6 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
             } else if (currentControlsState.canPause) {
                 $("#album-info .controls .pause").addClass("enabled").show();
                 $("#album-info .controls .play").hide();
-
             }
 
             // Show the skip buttons according to the flags.
