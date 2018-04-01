@@ -39,7 +39,7 @@ describe('controls.js', function() {
         it('when we have some tracks, we should clear tracklist, add tracks, and play first track', squire.run(['app/controls'], function(controls) {
             var tracks = ['track1', 'track2'];
 
-            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockpromise());
+            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
             td.when(mockMopidy.tracklist.add(tracks)).thenReturn(tracks);
 
             controls.playTracks(tracks);
@@ -50,7 +50,7 @@ describe('controls.js', function() {
         it('when we have no tracks, we should clear tracklist, but not add or play tracks', squire.run(['app/controls'], function(controls) {
             var tracks = [];
 
-            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockpromise());
+            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
 
             controls.playTracks(tracks);
 

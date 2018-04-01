@@ -44,6 +44,7 @@ describe('playback-state.js', function() {
         mockMopidy = {};
         mockMopidy.on = td.function('.on');
         mockMopidy.off = td.function('.off');
+        mockMopidy.playback = {};
 
         mockMopidyContainer = {}
         mockMopidyContainer.getInstance = function() {
@@ -54,6 +55,8 @@ describe('playback-state.js', function() {
         mockLogger = {};
         mockLogger.log = td.function('.log');
         squire.mock('app/logger', mockLogger);
+
+        squire.mock('mopidy', helper.mockPromise());
 
         squire.require(['app/playback-state'], function(playbackStateIn) {
             playbackState = playbackStateIn;
@@ -130,122 +133,160 @@ describe('playback-state.js', function() {
         });
     });
     describe('_determineControlsState', function() {
-        it('when not started playing, return correct controls state', function() {
+        it('when not started playing, return correct controls state', function(done) {
             playbackState._currentTrack = validFirstTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.NOT_STARTED;
 
-            var result = playbackState._determineControlsState();
-
-            assert.equal(result.canPlay, false);
-            assert.equal(result.canPause, false);
-            assert.equal(result.canSkipBack, false);
-            assert.equal(result.canSkipForward, false);
+            playbackState._determineControlsState()
+                .done((result) => {
+                    assert.equal(result.canPlay, false);
+                    assert.equal(result.canPause, false);
+                    assert.equal(result.canSkipBack, false);
+                    assert.equal(result.canSkipForward, false);
+                })
+                .finally(done);
         });
-        it('when playing finished, return correct controls state', function() {
+        it('when playing finished, return correct controls state', function(done) {
             playbackState._currentTrack = validFirstTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_FINISHED;
 
-            var result = playbackState._determineControlsState();
-
-            assert.equal(result.canPlay, false);
-            assert.equal(result.canPause, false);
-            assert.equal(result.canSkipBack, false);
-            assert.equal(result.canSkipForward, false);
+            playbackState._determineControlsState()
+                .done((result) => {
+                    assert.equal(result.canPlay, false);
+                    assert.equal(result.canPause, false);
+                    assert.equal(result.canSkipBack, false);
+                    assert.equal(result.canSkipForward, false);
+                })
+                .finally(done);
         });
-        it('when playing started, return correct controls state', function() {
+        it('when playing started, return correct controls state', function(done) {
             playbackState._currentTrack = validFirstTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_STARTED;
 
-            var result = playbackState._determineControlsState();
-
-            assert.equal(result.canPlay, false);
-            assert.equal(result.canPause, true);
-            assert.equal(result.canSkipBack, false);
-            assert.equal(result.canSkipForward, true);
+            playbackState._determineControlsState()
+                .done((result) => {
+                    assert.equal(result.canPlay, false);
+                    assert.equal(result.canPause, true);
+                    assert.equal(result.canSkipBack, false);
+                    assert.equal(result.canSkipForward, true);
+                })
+                .finally(done);
         });
-        it('when playing resumed, return correct controls state', function() {
+        it('when playing resumed, return correct controls state', function(done) {
             playbackState._currentTrack = validLastTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_RESUMED;
 
-            var result = playbackState._determineControlsState();
-
-            assert.equal(result.canPlay, false);
-            assert.equal(result.canPause, true);
-            assert.equal(result.canSkipBack, true);
-            assert.equal(result.canSkipForward, false);
+            playbackState._determineControlsState()
+                .done((result) => {
+                    assert.equal(result.canPlay, false);
+                    assert.equal(result.canPause, true);
+                    assert.equal(result.canSkipBack, true);
+                    assert.equal(result.canSkipForward, false);
+                })
+                .finally(done);
         });
-        it('when playing paused, return correct controls state', function() {
+        it('when playing paused, return correct controls state', function(done) {
             playbackState._currentTrack = validLastTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PAUSED;
 
-            var result = playbackState._determineControlsState();
-
-            assert.equal(result.canPlay, true);
-            assert.equal(result.canPause, false);
-            assert.equal(result.canSkipBack, true);
-            assert.equal(result.canSkipForward, false);
+            playbackState._determineControlsState()
+                .done((result) => {
+                    assert.equal(result.canPlay, true);
+                    assert.equal(result.canPause, false);
+                    assert.equal(result.canSkipBack, true);
+                    assert.equal(result.canSkipForward, false);
+                })
+                .finally(done);
         });
     });
     describe('_determineCurrentTrackDetails', function() {
-        it('when not started playing, return correct current track details', function() {
+        it('when not started playing, return correct current track details', function(done) {
+            var elapsedTime = 0;
+
             playbackState._currentTrack = validLastTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.NOT_STARTED;
 
-            var result = playbackState._determineCurrentTrackDetails();
-
-            assert.equal(result.trackNumber, null);
-            assert.equal(result.isPlaying, false);
-            assert.equal(result.isPaused, false);
+            playbackState._determineCurrentTrackDetails()
+                .done((result) => {
+                    assert.equal(result.trackNumber, null);
+                    assert.equal(result.isPlaying, false);
+                    assert.equal(result.isPaused, false);
+                    assert.equal(result.elapsedTimeMs, elapsedTime);
+                })
+                .finally(done);
         });
-        it('when playing finished, return correct current track details', function() {
+        it('when playing finished, return correct current track details', function(done) {
+            var elapsedTime = 0;
+
             playbackState._currentTrack = validLastTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_FINISHED;
 
-            var result = playbackState._determineCurrentTrackDetails();
-
-            assert.equal(result.trackNumber, null);
-            assert.equal(result.isPlaying, false);
-            assert.equal(result.isPaused, false);
+            playbackState._determineCurrentTrackDetails()
+                .done((result) => {
+                    assert.equal(result.trackNumber, null);
+                    assert.equal(result.isPlaying, false);
+                    assert.equal(result.isPaused, false);
+                    assert.equal(result.elapsedTimeMs, elapsedTime);
+                })
+                .finally(done);
         });
-        it('when playing started, return correct current track details', function() {
+        it('when playing started, return correct current track details', function(done) {
+            var elapsedTime = 1500;
+            mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
+
             playbackState._currentTrack = validLastTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_STARTED;
 
-            var result = playbackState._determineCurrentTrackDetails();
-
-            assert.equal(result.trackNumber, 10);
-            assert.equal(result.isPlaying, true);
-            assert.equal(result.isPaused, false);
+            playbackState._determineCurrentTrackDetails()
+                .done((result) => {
+                    assert.equal(result.trackNumber, 10);
+                    assert.equal(result.isPlaying, true);
+                    assert.equal(result.isPaused, false);
+                    assert.equal(result.elapsedTimeMs, elapsedTime);
+                })
+                .finally(done);
         });
-        it('when playing resumed, return correct current track details', function() {
+        it('when playing resumed, return correct current track details', function(done) {
+            var elapsedTime = 2500;
+            mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
+
             playbackState._currentTrack = validFirstTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PLAY_RESUMED;
 
-            var result = playbackState._determineCurrentTrackDetails();
-
-            assert.equal(result.trackNumber, 1);
-            assert.equal(result.isPlaying, true);
-            assert.equal(result.isPaused, false);
+            playbackState._determineCurrentTrackDetails()
+                .done((result) => {
+                    assert.equal(result.trackNumber, 1);
+                    assert.equal(result.isPlaying, true);
+                    assert.equal(result.isPaused, false);
+                    assert.equal(result.elapsedTimeMs, elapsedTime);
+                })
+                .finally(done);
         });
-        it('when playing paused, return correct current track details', function() {
+        it('when playing paused, return correct current track details', function(done) {
+            var elapsedTime = 2500;
+            mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
+
             playbackState._currentTrack = validFirstTrack;
             playbackState._tracks = tracks;
             playbackState._latestEvent = playbackState.EventName.PAUSED;
 
-            var result = playbackState._determineCurrentTrackDetails();
-
-            assert.equal(result.trackNumber, 1);
-            assert.equal(result.isPlaying, false);
-            assert.equal(result.isPaused, true);
+            playbackState._determineCurrentTrackDetails()
+                .done((result) => {
+                    assert.equal(result.trackNumber, 1);
+                    assert.equal(result.isPlaying, false);
+                    assert.equal(result.isPaused, true);
+                    assert.equal(result.elapsedTimeMs, elapsedTime);
+                })
+                .finally(done);
         });
     });
     describe('_isFirstTrack', function() {
