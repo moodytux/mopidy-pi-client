@@ -36,7 +36,43 @@ describe('controls.js', function() {
         squire.clean();
     });
     describe('playTracks', function() {
-        it('when we have some tracks, we should clear tracklist, add tracks, and play first track', squire.run(['app/controls'], function(controls) {
+        it('when we have some tracks and give a valid track index, we should clear tracklist, add tracks, and play the track at the given index', squire.run(['app/controls'], function(controls) {
+            var tracks = ['track1', 'track2'];
+            var trackIndex = 1;
+
+            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
+            td.when(mockMopidy.tracklist.add(tracks)).thenReturn(tracks);
+
+            controls.playTracks(tracks, trackIndex);
+
+            td.verify(mockMopidy.tracklist.add(tracks));
+            td.verify(mockMopidy.playback.play(tracks[trackIndex]));
+        }));
+        it('when we have some tracks and give a negative track index, we should clear tracklist, add tracks, and play the first track', squire.run(['app/controls'], function(controls) {
+            var tracks = ['track1', 'track2'];
+            var trackIndex = -1;
+
+            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
+            td.when(mockMopidy.tracklist.add(tracks)).thenReturn(tracks);
+
+            controls.playTracks(tracks, trackIndex);
+
+            td.verify(mockMopidy.tracklist.add(tracks));
+            td.verify(mockMopidy.playback.play(tracks[0]));
+        }));
+        it('when we have some tracks and give an out of bounds track index, we should clear tracklist, add tracks, and play the first track', squire.run(['app/controls'], function(controls) {
+            var tracks = ['track1', 'track2'];
+            var trackIndex = 2;
+
+            td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
+            td.when(mockMopidy.tracklist.add(tracks)).thenReturn(tracks);
+
+            controls.playTracks(tracks, trackIndex);
+
+            td.verify(mockMopidy.tracklist.add(tracks));
+            td.verify(mockMopidy.playback.play(tracks[0]));
+        }));
+        it('when we have some tracks and give an undefined track index, we should clear tracklist, add tracks, and play the first track', squire.run(['app/controls'], function(controls) {
             var tracks = ['track1', 'track2'];
 
             td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
@@ -52,7 +88,7 @@ describe('controls.js', function() {
 
             td.when(mockMopidy.tracklist.clear()).thenReturn(helper.mockPromise());
 
-            controls.playTracks(tracks);
+            controls.playTracks(tracks, 0);
 
             td.verify(mockMopidy.tracklist.add(td.matchers.anything()), {
                 times: 0

@@ -28,7 +28,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                         .addClass("track-" + track.track_no)
                         .addClass("disable-select")
                         .click(function() {
-                            controls.playTracks(tracks.slice(index));
+                            controls.playTracks(tracks, index);
                         })
                         .append("<div class='indicator' />")
                         .append("<div class='title'>" + track.track_no + ". " + track.name + "</div>")
@@ -43,7 +43,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                 }
                 $("#album-info .album-image .play-album-control").unbind("click").click(function() {
                     $("#album-info .album-image .play-album-control .icon").fadeOut();
-                    controls.playTracks(tracks);
+                    controls.playTracks(tracks, 0);
                     $("#album-info .album-image .play-album-control .circle").addClass("disappear");
                 });
 
