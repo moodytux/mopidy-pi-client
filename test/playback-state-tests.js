@@ -7,36 +7,29 @@ var assert = helper.assert;
 describe('playback-state.js', function() {
     var playbackState;
     var tracks;
-    var validFirstTrack;
-    var validLastTrack;
-    var invalidTrackNoInnerObject;
+    var validFirstTrackDetails;
+    var validLastTrackDetails;
     var controlsRenderer;
     var currentTrackDetailsRenderer;
     var mockMopidy;
     var mockMopidyContainer;
     var mockLogger;
+    var mockTrackDetailsMapper;
     before(function(done) {
         tracks = {
             length: 10
         }
-        validFirstTrack = {
-            tl_track: {
-                track: {
-                    track_no: 1
-                }
-            }
+        validFirstTrackDetails = {
+            isFirstTrack: true,
+            isLastTrack: false,
+            trackNumber: 1,
+            totalTimeMs: 100000
         };
-        validLastTrack = {
-            tl_track: {
-                track: {
-                    track_no: 10
-                }
-            }
-        };
-        invalidTrackNoInnerObject = {
-            tl_track: {
-                track: null
-            }
+        validLastTrackDetails = {
+            isFirstTrack: false,
+            isLastTrack: true,
+            trackNumber: 10,
+            totalTimeMs: 110000
         };
         controlsRenderer = function() {};
         currentTrackDetailsRenderer = function() {};
@@ -57,6 +50,10 @@ describe('playback-state.js', function() {
         squire.mock('app/logger', mockLogger);
 
         squire.mock('mopidy', helper.mockPromise());
+
+        mockTrackDetailsMapper = {};
+        mockTrackDetailsMapper.map = td.function('.map');
+        squire.mock('app/track-details-mapper', mockTrackDetailsMapper);
 
         squire.require(['app/playback-state'], function(playbackStateIn) {
             playbackState = playbackStateIn;
@@ -134,8 +131,7 @@ describe('playback-state.js', function() {
     });
     describe('_determineControlsState', function() {
         it('when not started playing, return correct controls state', function(done) {
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validFirstTrackDetails;
             playbackState._latestEvent = playbackState.EventName.NOT_STARTED;
 
             playbackState._determineControlsState()
@@ -148,8 +144,7 @@ describe('playback-state.js', function() {
                 .finally(done);
         });
         it('when playing finished, return correct controls state', function(done) {
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validFirstTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_FINISHED;
 
             playbackState._determineControlsState()
@@ -162,8 +157,7 @@ describe('playback-state.js', function() {
                 .finally(done);
         });
         it('when playing started, return correct controls state', function(done) {
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validFirstTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_STARTED;
 
             playbackState._determineControlsState()
@@ -176,8 +170,7 @@ describe('playback-state.js', function() {
                 .finally(done);
         });
         it('when playing resumed, return correct controls state', function(done) {
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validLastTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_RESUMED;
 
             playbackState._determineControlsState()
@@ -190,8 +183,7 @@ describe('playback-state.js', function() {
                 .finally(done);
         });
         it('when playing paused, return correct controls state', function(done) {
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validLastTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PAUSED;
 
             playbackState._determineControlsState()
@@ -204,167 +196,89 @@ describe('playback-state.js', function() {
                 .finally(done);
         });
     });
-    describe('_determineCurrentTrackDetails', function() {
-        it('when not started playing, return correct current track details', function(done) {
+    describe('_determineCurrentTrackState', function() {
+        it('when not started playing, return correct current track state', function(done) {
             var elapsedTime = 0;
 
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validLastTrackDetails;
             playbackState._latestEvent = playbackState.EventName.NOT_STARTED;
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done((result) => {
                     assert.equal(result.trackNumber, null);
                     assert.equal(result.isPlaying, false);
                     assert.equal(result.isPaused, false);
                     assert.equal(result.elapsedTimeMs, elapsedTime);
+                    assert.equal(result.totalTimeMs, validLastTrackDetails.totalTimeMs);
                 })
                 .finally(done);
         });
-        it('when playing finished, return correct current track details', function(done) {
+        it('when playing finished, return correct current track state', function(done) {
             var elapsedTime = 0;
 
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validLastTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_FINISHED;
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done((result) => {
                     assert.equal(result.trackNumber, null);
                     assert.equal(result.isPlaying, false);
                     assert.equal(result.isPaused, false);
                     assert.equal(result.elapsedTimeMs, elapsedTime);
+                    assert.equal(result.totalTimeMs, validLastTrackDetails.totalTimeMs);
                 })
                 .finally(done);
         });
-        it('when playing started, return correct current track details', function(done) {
+        it('when playing started, return correct current track state', function(done) {
             var elapsedTime = 1500;
             mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
 
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validLastTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_STARTED;
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done((result) => {
                     assert.equal(result.trackNumber, 10);
                     assert.equal(result.isPlaying, true);
                     assert.equal(result.isPaused, false);
                     assert.equal(result.elapsedTimeMs, elapsedTime);
+                    assert.equal(result.totalTimeMs, validLastTrackDetails.totalTimeMs);
                 })
                 .finally(done);
         });
-        it('when playing resumed, return correct current track details', function(done) {
+        it('when playing resumed, return correct current track state', function(done) {
             var elapsedTime = 2500;
             mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
 
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validFirstTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PLAY_RESUMED;
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done((result) => {
                     assert.equal(result.trackNumber, 1);
                     assert.equal(result.isPlaying, true);
                     assert.equal(result.isPaused, false);
                     assert.equal(result.elapsedTimeMs, elapsedTime);
+                    assert.equal(result.totalTimeMs, validFirstTrackDetails.totalTimeMs);
                 })
                 .finally(done);
         });
-        it('when playing paused, return correct current track details', function(done) {
+        it('when playing paused, return correct current track state', function(done) {
             var elapsedTime = 2500;
             mockMopidy.playback.getTimePosition = () => helper.mockPromise(elapsedTime);
 
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
+            playbackState._currentTrackDetails = validFirstTrackDetails;
             playbackState._latestEvent = playbackState.EventName.PAUSED;
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done((result) => {
                     assert.equal(result.trackNumber, 1);
                     assert.equal(result.isPlaying, false);
                     assert.equal(result.isPaused, true);
                     assert.equal(result.elapsedTimeMs, elapsedTime);
+                    assert.equal(result.totalTimeMs, validFirstTrackDetails.totalTimeMs);
                 })
                 .finally(done);
-        });
-    });
-    describe('_isFirstTrack', function() {
-        it('when track is null, return false', function() {
-            playbackState._currentTrack = null;
-
-            assert.equal(playbackState._isFirstTrack(), false);
-        });
-        it('when track inner object is null, return false', function() {
-            playbackState._currentTrack = invalidTrackNoInnerObject;
-
-            assert.equal(playbackState._isFirstTrack(), false);
-        });
-        it('when track is first track, return true', function() {
-            playbackState._currentTrack = validFirstTrack;
-
-            assert.ok(playbackState._isFirstTrack());
-        });
-        it('when track is not first track, return false', function() {
-            playbackState._currentTrack = validLastTrack;
-
-            assert.equal(playbackState._isFirstTrack(), false);
-        });
-    });
-    describe('_isLastTrack', function() {
-        it('when track is null, return false', function() {
-            playbackState._currentTrack = null;
-            playbackState._tracks = tracks;
-
-            assert.equal(playbackState._isLastTrack(), false);
-        });
-        it('when track inner object is null, return false', function() {
-            playbackState._currentTrack = invalidTrackNoInnerObject;
-            playbackState._tracks = tracks;
-
-            assert.equal(playbackState._isLastTrack(), false);
-        });
-        it('when track is first track, return false', function() {
-            playbackState._currentTrack = validFirstTrack;
-            playbackState._tracks = tracks;
-
-            assert.equal(playbackState._isLastTrack(), false);
-        });
-        it('when track is last track, return true', function() {
-            playbackState._currentTrack = validLastTrack;
-            playbackState._tracks = tracks;
-
-            assert.ok(playbackState._isLastTrack());
-        });
-        it('when track is middle track, return false', function() {
-            var track = {
-                tl_track: {
-                    track: {
-                        track_no: 4
-                    }
-                }
-            };
-            playbackState._currentTrack = track;
-            playbackState._tracks = tracks;
-
-            assert.equal(playbackState._isLastTrack(), false);
-        });
-    });
-    describe('_getTrackNumber', function() {
-        it('when track is null, return null', function() {
-            playbackState._currentTrack = null;
-
-            assert.equal(playbackState._getTrackNumber(), null);
-        });
-        it('when track inner object is null, return null', function() {
-            playbackState._currentTrack = invalidTrackNoInnerObject;
-
-            assert.equal(playbackState._getTrackNumber(), null);
-        });
-        it('when track number is present, return it', function() {
-            playbackState._currentTrack = validLastTrack;
-
-            assert.equal(playbackState._getTrackNumber(), 10);
         });
     });
 });

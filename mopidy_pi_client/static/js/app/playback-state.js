@@ -1,4 +1,4 @@
-define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidyContainer, Mopidy) {
+define(["app/logger", "app/mopidy-container", "mopidy", "app/track-details-mapper"], function(logger, mopidyContainer, Mopidy, trackDetailsMapper) {
     logger.log("In playback-state.js");
 
     var playbackState = {
@@ -13,9 +13,9 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
         _controlsRenderer: null,
         _trackListRenderer: null,
         _tracks: null,
-        _currentTrack: null,
+        _currentTrackDetails: {},
         _latestEvent: null,
-        _currentTrackDetailsUpdateTimerId: null,
+        _currentTrackStateUpdateTimerId: null,
         associateWithMopidyEvents: function() {
             // Guard against setters not being called prior to event association call.
             if ((playbackState._controlsRenderer == null) ||
@@ -29,22 +29,26 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
             }
             playbackState._mopidy.off("event:trackPlaybackStarted");
             playbackState._mopidy.on("event:trackPlaybackStarted", function(tlTrack) {
-                playbackState._currentTrack = tlTrack;
+                playbackState._currentTrackDetails =
+                    trackDetailsMapper.map(tlTrack, playbackState._tracks.length);
                 playbackState.updateState(playbackState.EventName.PLAY_STARTED);
             });
             playbackState._mopidy.off("event:trackPlaybackResumed");
             playbackState._mopidy.on("event:trackPlaybackResumed", function(tlTrack) {
-                playbackState._currentTrack = tlTrack;
+                playbackState._currentTrackDetails =
+                    trackDetailsMapper.map(tlTrack, playbackState._tracks.length);
                 playbackState.updateState(playbackState.EventName.PLAY_RESUMED);
             });
             playbackState._mopidy.off("event:trackPlaybackPaused");
             playbackState._mopidy.on("event:trackPlaybackPaused", function(tlTrack) {
-                playbackState._currentTrack = tlTrack;
+                playbackState._currentTrackDetails =
+                    trackDetailsMapper.map(tlTrack, playbackState._tracks.length);
                 playbackState.updateState(playbackState.EventName.PAUSED);
             });
             playbackState._mopidy.off("event:trackPlaybackEnded");
             playbackState._mopidy.on("event:trackPlaybackEnded", function(tlTrack) {
-                playbackState._currentTrack = tlTrack;
+                playbackState._currentTrackDetails =
+                    trackDetailsMapper.map(tlTrack, playbackState._tracks.length);
                 playbackState.updateState(playbackState.EventName.PLAY_FINISHED);
             });
         },
@@ -63,7 +67,7 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
             playbackState._determineControlsState()
                 .done(playbackState._controlsRenderer);
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done(playbackState._trackListRenderer);
 
             playbackState._setupCurrentTrackDetailsRefreshTimer();
@@ -83,124 +87,94 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
                     case playbackState.EventName.PLAY_RESUMED:
                         controlsState.canPlay = false;
                         controlsState.canPause = true;
-                        controlsState.canSkipBack = !playbackState._isFirstTrack();
-                        controlsState.canSkipForward = !playbackState._isLastTrack();
+                        controlsState.canSkipBack = !playbackState._currentTrackDetails.isFirstTrack;
+                        controlsState.canSkipForward = !playbackState._currentTrackDetails.isLastTrack;
                         break;
                     case playbackState.EventName.PAUSED:
                         controlsState.canPlay = true;
                         controlsState.canPause = false;
-                        controlsState.canSkipBack = !playbackState._isFirstTrack();
-                        controlsState.canSkipForward = !playbackState._isLastTrack();
+                        controlsState.canSkipBack = !playbackState._currentTrackDetails.isFirstTrack;
+                        controlsState.canSkipForward = !playbackState._currentTrackDetails.isLastTrack;
                         break;
                 }
                 return controlsState;
             });
         },
-        _determineCurrentTrackDetails: function() {
+        _determineCurrentTrackState: function() {
             if (playbackState._mopidy == null) {
                 playbackState._mopidy = mopidyContainer.getInstance();
             }
 
-            var currentTrackDetails = {};
+            var currentTrackState = {};
+            currentTrackState.totalTimeMs =
+                playbackState._currentTrackDetails.totalTimeMs;
             switch (playbackState._latestEvent) {
                 case playbackState.EventName.NOT_STARTED:
                 case playbackState.EventName.PLAY_FINISHED:
-                    currentTrackDetails.trackNumber = null;
-                    currentTrackDetails.isPlaying = false;
-                    currentTrackDetails.isPaused = false;
-                    currentTrackDetails.elapsedTimeMs = 0;
+                    currentTrackState.trackNumber = null;
+                    currentTrackState.isPlaying = false;
+                    currentTrackState.isPaused = false;
+                    currentTrackState.elapsedTimeMs = 0;
                     break;
                 case playbackState.EventName.PLAY_STARTED:
                 case playbackState.EventName.PLAY_RESUMED:
-                    currentTrackDetails.trackNumber = playbackState._getTrackNumber();
-                    currentTrackDetails.isPlaying = true;
-                    currentTrackDetails.isPaused = false;
-                    currentTrackDetails.elapsedTimeMs = null;
+                    currentTrackState.trackNumber =
+                        playbackState._currentTrackDetails.trackNumber;
+                    currentTrackState.isPlaying = true;
+                    currentTrackState.isPaused = false;
+                    currentTrackState.elapsedTimeMs = null;
                     break;
                 case playbackState.EventName.PAUSED:
-                    currentTrackDetails.trackNumber = playbackState._getTrackNumber();
-                    currentTrackDetails.isPlaying = false;
-                    currentTrackDetails.isPaused = true;
-                    currentTrackDetails.elapsedTimeMs = null;
+                    currentTrackState.trackNumber =
+                        playbackState._currentTrackDetails.trackNumber;
+                    currentTrackState.isPlaying = false;
+                    currentTrackState.isPaused = true;
+                    currentTrackState.elapsedTimeMs = null;
                     break;
                 default:
-                    currentTrackDetails.trackNumber = null;
-                    currentTrackDetails.isPlaying = false;
-                    currentTrackDetails.isPaused = false;
-                    currentTrackDetails.elapsedTimeMs = 0;
+                    currentTrackState.trackNumber = null;
+                    currentTrackState.isPlaying = false;
+                    currentTrackState.isPaused = false;
+                    currentTrackState.elapsedTimeMs = 0;
             }
 
             // If needed, chain the get elapsed time call. Return a promise either way.
-            if (currentTrackDetails.elapsedTimeMs === null) {
+            if (currentTrackState.elapsedTimeMs === null) {
                 return playbackState._mopidy.playback.getTimePosition()
                     .then(function(positionMs) {
-                        currentTrackDetails.elapsedTimeMs = positionMs;
-                        return currentTrackDetails;
+                        currentTrackState.elapsedTimeMs = positionMs;
+                        return currentTrackState;
                     });
             } else {
-                return Mopidy.when(currentTrackDetails);
+                return Mopidy.when(currentTrackState);
             }
         },
         _setupCurrentTrackDetailsRefreshTimer: function() {
             switch (playbackState._latestEvent) {
                 case playbackState.EventName.PLAY_STARTED:
                 case playbackState.EventName.PLAY_RESUMED:
-                    playbackState._startCurrentTrackDetailsRefreshTimer();
+                    playbackState._startCurrentTrackStateRefreshTimer();
                     break;
                 case playbackState.EventName.NOT_STARTED:
                 case playbackState.EventName.PLAY_FINISHED:
                 default:
-                    playbackState._stopCurrentTrackDetailsRefreshTimer();
+                    playbackState._stopCurrentTrackStateRefreshTimer();
             }
         },
-        _startCurrentTrackDetailsRefreshTimer: function() {
+        _startCurrentTrackStateRefreshTimer: function() {
             var intervalMs = 1000 * 3;
-            playbackState._currentTrackDetailsUpdateTimerId =
+            playbackState._currentTrackStateUpdateTimerId =
                 setInterval(playbackState._refreshCurrentTrackDetails, intervalMs);
         },
-        _stopCurrentTrackDetailsRefreshTimer: function() {
-            clearInterval(playbackState._currentTrackDetailsUpdateTimerId);
+        _stopCurrentTrackStateRefreshTimer: function() {
+            clearInterval(playbackState._currentTrackStateUpdateTimerId);
         },
         _refreshCurrentTrackDetails: function() {
             logger.log("In playback-state.js, refreshing the current track details");
 
-            playbackState._determineCurrentTrackDetails()
+            playbackState._determineCurrentTrackState()
                 .done(playbackState._trackListRenderer);
         },
-        _isFirstTrack: function() {
-            var trackNo = null;
-            var isFirstTrack = false;
-            if (playbackState._isTrackNumberValid()) {
-                trackNo = playbackState._currentTrack.tl_track.track.track_no;
-                if (trackNo == 1) {
-                    isFirstTrack = true;
-                }
-            }
-            return isFirstTrack;
-        },
-        _isLastTrack: function() {
-            var trackNo = null;
-            var isLastTrack = false;
-            if (playbackState._isTrackNumberValid()) {
-                trackNo = playbackState._currentTrack.tl_track.track.track_no;
-                if (trackNo == playbackState._tracks.length) {
-                    isLastTrack = true;
-                }
-            }
-            return isLastTrack;
-        },
-        _getTrackNumber: function() {
-            var trackNo = null;
-            if (playbackState._isTrackNumberValid()) {
-                trackNo = playbackState._currentTrack.tl_track.track.track_no;
-            }
-            return trackNo;
-        },
-        _isTrackNumberValid: function() {
-            return ((playbackState._currentTrack != null) &&
-                (playbackState._currentTrack.tl_track != null) &&
-                (playbackState._currentTrack.tl_track.track != null));
-        }
     };
     return playbackState;
 });
