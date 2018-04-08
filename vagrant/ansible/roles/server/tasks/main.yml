@@ -1,4 +1,12 @@
 ---
+- name: Add the nodejs key for their repo
+  become: yes
+  apt_key: id=68576280 keyserver=keyserver.ubuntu.com state=present
+
+- name: Add nodejs repo
+  become: yes
+  apt_repository: repo="deb https://deb.nodesource.com/node_9.x xenial main" state=present
+
 - name: Update apt
   become: yes
   apt: update_cache=yes

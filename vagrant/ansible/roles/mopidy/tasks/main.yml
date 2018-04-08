@@ -4,8 +4,7 @@
   apt: pkg={{ item }} state=latest
   with_items:
   - mopidy
-  - npm
-  - nodejs-legacy
+  - nodejs
 
 - name: Give the mopidy user a shell
   become: yes
@@ -18,7 +17,7 @@
     path: /var/lib/mopidy/.bash_profile
     create: yes
     block: |
-      export NODE_PATH="/usr/local/lib/node_modules"
+      export NODE_PATH="/usr/lib/node_modules"
 
 - name: Install testing packages globally
   become: yes
@@ -30,6 +29,7 @@
   - testdouble
   - squirejs
   - when
+  - mopidy
 
 - name: Install all required mopidy extensions
   become: yes

@@ -1,14 +1,14 @@
-define(["jquery", "mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], function($, Mopidy, logger, mopidyContainer, albumMapper) {
-    logger.log("In album-data.js")
+define(["mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], function(Mopidy, logger, mopidyContainer, albumMapper) {
+    logger.log("In local-album-data.js")
     var mopidy = mopidyContainer.getInstance();
 
-    var albumData = {
+    var localAlbumData = {
         getAlbumList: function() {
             // If we need to, fetch the album list.
             if (typeof albumList === 'undefined') {
-                return albumData._getAlbumUris()
-                    .then(albumData._lookupAlbumUris)
-                    .then(albumData._mapAlbumTrackArrayToAlbumArray)
+                return localAlbumData._getAlbumUris()
+                    .then(localAlbumData._lookupAlbumUris)
+                    .then(localAlbumData._mapAlbumTrackArrayToAlbumArray)
                     .then(function(albumListIn) {
                         albumList = albumListIn;
                         return albumList;
@@ -20,7 +20,7 @@ define(["jquery", "mopidy", "app/logger", "app/mopidy-container", "app/album-map
             }
         },
         getAlbumInfo: function(albumUri) {
-            return albumData._lookupAlbumUris([albumUri])
+            return localAlbumData._lookupAlbumUris([albumUri])
                 .then(function(albums) {
                     return albums[albumUri]
                 });
@@ -28,17 +28,8 @@ define(["jquery", "mopidy", "app/logger", "app/mopidy-container", "app/album-map
         _getAlbumUris: function() {
             // Returns a promise with album URIs.
             logger.log("Fetching album URIs");
-            var albumUris = [];
             return mopidy.library.browse("local:directory?type=album")
-                .then(function(albumRefs) {
-                    if (albumRefs) {
-                        // Loop through the album refs, storing the uri for each.
-                        $.each(albumRefs, function(index, albumRef) {
-                            albumUris.push(albumRef.uri);
-                        });
-                    }
-                    return albumUris;
-                });
+                .then(localAlbumData._mapAlbumRefsToAlbumUris);
         },
         _lookupAlbumUris: function(albumUris) {
             logger.log("About to lookup album URIs", albumUris);
@@ -50,17 +41,30 @@ define(["jquery", "mopidy", "app/logger", "app/mopidy-container", "app/album-map
             logger.log("Mapping array of album tracks to album array", arrayOfAlbumTracks);
             var albumArray = [];
             if (arrayOfAlbumTracks) {
-                $.each(arrayOfAlbumTracks, function(index, trackArray) {
-                    var album = albumMapper.trackListToAlbum(trackArray);
-                    if (album !== null) {
-                        albumArray.push(album);
-                    }
-                });
+                Object.entries(arrayOfAlbumTracks).forEach(
+                    ([index, trackArray]) => {
+                        var album = albumMapper.trackListToAlbum(trackArray);
+                        if (album !== null) {
+                            albumArray.push(album);
+                        }
+                    });
             }
 
             return albumArray;
+        },
+        _mapAlbumRefsToAlbumUris: function(albumRefs) {
+            var albumUris = [];
+            if (albumRefs) {
+                // Loop through the album refs, storing the uri for each.
+                Object.entries(albumRefs).forEach(
+                    ([index, albumRef]) => {
+                        albumUris.push(albumRef.uri);
+                    }
+                );
+            }
+            return albumUris;
         }
     };
 
-    return albumData;
+    return localAlbumData;
 });

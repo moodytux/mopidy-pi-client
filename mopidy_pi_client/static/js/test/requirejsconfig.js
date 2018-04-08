@@ -5,7 +5,7 @@ define(["app/requirejsconfig"], function(requireJSConfig) {
         return Object.assign(config.requireJSConfig, {
             packages: [{
                 name: "squirejs",
-                location: "/usr/local/lib/node_modules/squirejs",
+                location: "/usr/lib/node_modules/squirejs",
                 main: "src/Squire"
             }],
             nodeRequire: require
