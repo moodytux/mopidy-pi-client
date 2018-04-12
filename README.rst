@@ -53,7 +53,6 @@ Feature roadmap
 ===============
 
 - Show track artist on a Various Artists album info screen
-- Show the elapsed time of current track as a progress bar
 - Look into possibility of removing cursor to be more touch friendly
 - Adding gesture support to the track list on the album info screen
 - Selecting albums by genre
@@ -100,6 +99,13 @@ Credits
 
 Changelog
 =========
+
+v0.3.0
+----------------------------------------
+
+- Added a progress bar on the current track to indicate elapsed playing time.
+- Code refactoring to have unit tested playback state.
+- Updating Ansible scripts to provide latest NodeJS for use with tests.
 
 v0.2.0
 ----------------------------------------
