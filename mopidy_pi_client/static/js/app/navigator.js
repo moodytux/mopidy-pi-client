@@ -1,4 +1,4 @@
-define(["app/logger", "app/local-album-data", "app/album-category-decorator", "app/online-album-decorator", "app/album-list-screen", "app/album-info-screen"], function(logger, localAlbumData, albumCategoryDecorator, onlineAlbumDecorator, albumListScreen, albumInfoScreen) {
+define(["app/logger", "app/local-album-data", "app/album-category-decorator", "app/album-list-screen", "app/album-info-screen"], function(logger, localAlbumData, albumCategoryDecorator, albumListScreen, albumInfoScreen) {
     logger.log("In navigator.js")
     var navigator = {
         showOfflineScreen: function() {

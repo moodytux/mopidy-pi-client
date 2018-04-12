@@ -24,13 +24,14 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                 $.each(tracks, function(index, track) {
                     $("<a/>")
                         .addClass("list-group-item")
+                        .addClass("disable-select")
                         .addClass("track")
                         .addClass("track-" + track.track_no)
-                        .addClass("disable-select")
                         .click(function() {
                             controls.playTracks(tracks, index);
                         })
-                        .append("<div class='indicator' />")
+                        .append("<div class='progress'></div>")
+                        .append("<div class='indicator'><div class='indicator-shape' /></div>")
                         .append("<div class='title'>" + track.track_no + ". " + track.name + "</div>")
                         .appendTo($('#album-info .track-list'));
                 });
@@ -125,12 +126,21 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
         renderCurrentTrackDetails: function(currentTrackDetails) {
             logger.log("About to render current track details with state ", currentTrackDetails);
 
-            // Render the play and paused icons.
-            $("#album-info .track-list .track").removeClass("playing").removeClass("paused");
+            var currentTrackDiv = $("#album-info .track-list .track-" + currentTrackDetails.trackNumber);
+
+            // Remove all indicators, then render the current tracks play or paused icon.
+            $(".indicator").removeClass("playing").removeClass("paused");
             if (currentTrackDetails.isPlaying) {
-                $("#album-info .track-list .track-" + currentTrackDetails.trackNumber).addClass("playing");
+                $(".indicator", currentTrackDiv).addClass("playing");
             } else if (currentTrackDetails.isPaused) {
-                $("#album-info .track-list .track-" + currentTrackDetails.trackNumber).addClass("paused");
+                $(".indicator", currentTrackDiv).addClass("paused");
+            }
+
+            // Remove all progress bars, then render the current tracks the progress bar.
+            $(".progress").width("0%");
+            if (currentTrackDetails.elapsedTimeMs && currentTrackDetails.totalTimeMs) {
+                var progressDiv = (currentTrackDetails.elapsedTimeMs / currentTrackDetails.totalTimeMs) * 100;
+                $(".progress", currentTrackDiv).width(progressDiv + "%");
             }
         }
     };

@@ -159,16 +159,38 @@ section#album-info .track-list {
   overflow-y: auto;
 }
 
-section#album-info .track-list .title {
-  padding-left: 20px;
+section#album-info .track-list .track {
+  padding: 0px;
 }
 
-section#album-info .track-list a.playing,
-section#album-info .track-list a.paused {
-  background-color: #ddd;
+section#album-info .track-list .track .progress {
+  position: absolute;
+  height: 100%;
+  background-color: #CCFFCC;
+  width: 0%;
+  border-radius: 0px;
+  z-index: 0;
 }
 
-section#album-info .track-list a.playing .indicator {
+section#album-info .track-list .track .title {
+  position: relative;
+  padding-left: 35px;
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  z-index: 1;
+}
+
+section#album-info .track-list .track .indicator.playing,
+section#album-info .track-list .track .indicator.paused {
+  position: absolute;
+  padding-left: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  z-index: 1;
+}
+
+section#album-info .track-list .track .indicator.playing .indicator-shape {
   float: left;
   width: 0px;
   height: 0px;
@@ -178,7 +200,7 @@ section#album-info .track-list a.playing .indicator {
   border-bottom: 5px solid transparent;
 }
 
-section#album-info .track-list a.paused .indicator {
+section#album-info .track-list .track .indicator.paused .indicator-shape {
   float: left;
   width: 8px;
   height: 9px;
