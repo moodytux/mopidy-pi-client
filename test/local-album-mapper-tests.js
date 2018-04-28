@@ -4,16 +4,16 @@ var td = helper.td;
 var squire = helper.squire;
 var assert = helper.assert;
 
-describe('album-mapper.js', function() {
+describe('local-album-mapper.js', function() {
     var mocklogger;
-    var albumMapper;
+    var localAlbumMapper;
     before(function(done) {
         mocklogger = {};
         mocklogger.log = td.function('.log');
         squire.mock('app/logger', mocklogger);
 
-        squire.require(['app/album-mapper'], function(albumMapperIn) {
-            albumMapper = albumMapperIn;
+        squire.require(['app/local-album-mapper'], function(localAlbumMapperIn) {
+            localAlbumMapper = localAlbumMapperIn;
             done();
         });
     });
@@ -34,11 +34,11 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.ok(albumMapper.trackListToAlbum(tracks));
+            assert.ok(localAlbumMapper.trackListToAlbum(tracks));
         });
         it('when a track array is invalid, we return null', function() {
             var tracks = [];
-            assert.equal(albumMapper.trackListToAlbum(tracks), null);
+            assert.equal(localAlbumMapper.trackListToAlbum(tracks), null);
         });
     });
     describe('_isValid', function() {
@@ -52,15 +52,15 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.ok(albumMapper._isValid(tracks));
+            assert.ok(localAlbumMapper._isValid(tracks));
         });
         it('when we have been given undefined tracks, it is invalid', function() {
             var tracks = undefined;
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when we have been given zero tracks, it is invalid', function() {
             var tracks = [];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when a tracks album has an undefined image field, it is invalid', function() {
             var tracks = [{
@@ -72,7 +72,7 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when a tracks album has no image, it is invalid', function() {
             var tracks = [{
@@ -84,7 +84,7 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when a tracks album has an undefined artist field, it is invalid', function() {
             var tracks = [{
@@ -94,7 +94,7 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when a tracks album has no artist, it is invalid', function() {
             var tracks = [{
@@ -104,7 +104,7 @@ describe('album-mapper.js', function() {
                 },
                 genre: "Rock"
             }];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
         it('when a track has no genre, it is invalid', function() {
             var tracks = [{
@@ -116,7 +116,7 @@ describe('album-mapper.js', function() {
                 },
                 genre: undefined
             }];
-            assert.equal(albumMapper._isValid(tracks), false);
+            assert.equal(localAlbumMapper._isValid(tracks), false);
         });
     });
     describe('_map', function() {
@@ -144,10 +144,11 @@ describe('album-mapper.js', function() {
                 artist: albumArtist,
                 image: albumImage,
                 genre: albumGenre,
-                uri: albumUri
+                uri: albumUri,
+                isLocal: true
             };
 
-            assert.deepEqual(albumMapper._map(tracks), expectedAlbum);
+            assert.deepEqual(localAlbumMapper._map(tracks), expectedAlbum);
         });
     });
     describe('_normaliseGenre', function() {
@@ -156,7 +157,7 @@ describe('album-mapper.js', function() {
                 artist: "Various artists",
                 genre: "Rock"
             };
-            albumMapper._normaliseGenre(album);
+            localAlbumMapper._normaliseGenre(album);
             assert.equal(album.genre, "Various");
         });
         it('when we normalise an album that isnt a various artists album, the 1st letter of each word in the genre should be uppercased', function() {
@@ -164,7 +165,7 @@ describe('album-mapper.js', function() {
                 artist: "U2",
                 genre: " alternAtive ROCK "
             };
-            albumMapper._normaliseGenre(album);
+            localAlbumMapper._normaliseGenre(album);
             assert.equal(album.genre, "Alternative Rock");
         });
     });

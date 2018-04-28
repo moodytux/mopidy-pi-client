@@ -1,4 +1,4 @@
-define(["mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], function(Mopidy, logger, mopidyContainer, albumMapper) {
+define(["mopidy", "app/logger", "app/mopidy-container", "app/local-album-mapper"], function(Mopidy, logger, mopidyContainer, localAlbumMapper) {
     logger.log("In local-album-data.js")
     var mopidy = mopidyContainer.getInstance();
 
@@ -43,7 +43,7 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/album-mapper"], fun
             if (arrayOfAlbumTracks) {
                 Object.entries(arrayOfAlbumTracks).forEach(
                     ([index, trackArray]) => {
-                        var album = albumMapper.trackListToAlbum(trackArray);
+                        var album = localAlbumMapper.trackListToAlbum(trackArray);
                         if (album !== null) {
                             albumArray.push(album);
                         }

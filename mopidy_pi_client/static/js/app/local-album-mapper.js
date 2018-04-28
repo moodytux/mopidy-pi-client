@@ -1,11 +1,11 @@
 define(["app/logger", "app/word-helper"], function(logger, wordHelper) {
-    logger.log("In album-mapper.js")
+    logger.log("In local-album-mapper.js")
 
-    var albumMapper = {
+    var localAlbumMapper = {
         trackListToAlbum: function(trackArray) {
-            if (albumMapper._isValid(trackArray)) {
-                var album = albumMapper._map(trackArray);
-                albumMapper._normaliseGenre(album);
+            if (localAlbumMapper._isValid(trackArray)) {
+                var album = localAlbumMapper._map(trackArray);
+                localAlbumMapper._normaliseGenre(album);
                 return album;
             } else {
                 return null;
@@ -46,7 +46,8 @@ define(["app/logger", "app/word-helper"], function(logger, wordHelper) {
                 artist: trackAlbum.artists[0].name,
                 image: trackAlbum.images[0],
                 genre: trackArray[0].genre,
-                uri: trackAlbum.uri
+                uri: trackAlbum.uri,
+                isLocal: true
             };
         },
         _normaliseGenre: function(album) {
@@ -57,5 +58,5 @@ define(["app/logger", "app/word-helper"], function(logger, wordHelper) {
             }
         }
     };
-    return albumMapper;
+    return localAlbumMapper;
 });
