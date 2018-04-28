@@ -70,6 +70,7 @@ To develop on mopidy-pi-client, there is a ready made Vagrantfile and Ansible pl
 - Get your environment up and running by typing in a terminal::
 
     cd <repo_path>/vagrant
+    cp ansible/vars/secret.yml.sample ansible/vars/secret.yml
     vagrant up
 
 - See your environment in a browser by going to http://192.168.33.10:6680/pi-client/html/

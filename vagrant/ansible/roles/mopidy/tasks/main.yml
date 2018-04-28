@@ -39,6 +39,12 @@
   - Mopidy-Local-SQLite
   - Mopidy-Local-Images
 
+- name: Install mopidy-spotify (doesnt work with pip above)
+  become: yes
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - mopidy-spotify
+
 - name: Install the mopidy pi client from our synced folder
   become: yes
   become_user: mopidy

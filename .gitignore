@@ -9,3 +9,4 @@ build/
 dist/
 vagrant/.vagrant
 vagrant/music
+vagrant/ansible/vars/secret.yml

@@ -40,10 +40,20 @@ mopidy = INFO
 enabled = true
 hostname = {{server.ip}}
 port = 6600
-password = 
+password =
 max_connections = 20
 connection_timeout = 60
 zeroconf = Mopidy MPD server on $hostname
-command_blacklist = 
+command_blacklist =
 default_playlist_scheme = m3u
 
+[pi-client]
+enabled = true
+
+[spotify]
+enabled = true
+bitrate = 320
+username = {{spotify.username}}
+password = {{spotify.password}}
+client_id = {{spotify.client_id}}
+client_secret = {{spotify.client_secret}}

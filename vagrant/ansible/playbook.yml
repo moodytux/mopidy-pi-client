@@ -8,6 +8,7 @@
     become: yes
   vars_files:
     - vars/all.yml
+    - vars/secret.yml
   roles:
     - server
     - mopidy
