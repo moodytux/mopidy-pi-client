@@ -34,7 +34,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         .attr("data-piclient-album-category-index", album.category.index)
                         .click(function() {
                             if ($(this).hasClass('ui-state-active')) {
-                                _navigateToAlbumCallback(album.uri);
+                                _navigateToAlbumCallback(album);
                             }
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));

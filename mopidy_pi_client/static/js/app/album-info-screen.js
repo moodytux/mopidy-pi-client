@@ -12,14 +12,15 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
         setNavigateBackCallback: function(navigateBackCallbackIn) {
             navigateBackCallback = navigateBackCallbackIn;
         },
-        render: function(tracks) {
-            logger.log("About to render the following tracks", tracks);
+        render: function(album) {
+            logger.log("About to render the following album", album);
 
             // Reinitialise the info screen.
             $('#album-info .track-list').empty();
             $("#album-info .album-image .play-album-control .icon").show();
             $("#album-info .album-image .play-album-control .circle").removeClass("disappear");
 
+            var tracks = album.tracks;
             if (tracks && (tracks.length > 0)) {
                 $.each(tracks, function(index, track) {
                     $("<a/>")
@@ -37,11 +38,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                 });
 
                 // Set the album info.
-                var album = tracks[0].album;
-                if ((typeof album.images !== "undefined") && (album.images.length > 0)) {
-                    $("#album-info .album-image")
-                        .css("background-image", "url(" + tracks[0].album.images[0] + ")");
-                }
+                $("#album-info .album-image").css("background-image", "url(" + album.image + ")");
                 $("#album-info .album-image .play-album-control").unbind("click").click(function() {
                     $("#album-info .album-image .play-album-control .icon").fadeOut();
                     controls.playTracks(tracks, 0);

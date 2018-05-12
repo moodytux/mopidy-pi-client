@@ -39,11 +39,39 @@
   - Mopidy-Local-SQLite
   - Mopidy-Local-Images
 
+- name: Add the mopidy key for their repo
+  become: yes
+  apt_key: url=https://apt.mopidy.com/mopidy.gpg state=present
+
+- name: Add mopidy repo
+  become: yes
+  apt_repository: repo="deb http://apt.mopidy.com/ stretch main contrib non-free" state=present
+
+- name: Add mopidy src repo
+  become: yes
+  apt_repository: repo="deb-src http://apt.mopidy.com/ stretch main contrib non-free" state=present
+
+- name: Update apt
+  become: yes
+  apt: update_cache=yes
+
 - name: Install mopidy-spotify (doesnt work with pip above)
   become: yes
   apt: pkg={{ item }} state=latest
   with_items:
     - mopidy-spotify
+
+- name: Remove mopidy repo
+  become: yes
+  apt_repository: repo="deb http://apt.mopidy.com/ stretch main contrib non-free" state=absent
+
+- name: Remove mopidy src repo
+  become: yes
+  apt_repository: repo="deb-src http://apt.mopidy.com/ stretch main contrib non-free" state=absent
+
+- name: Update apt
+  become: yes
+  apt: update_cache=yes
 
 - name: Install the mopidy pi client from our synced folder
   become: yes

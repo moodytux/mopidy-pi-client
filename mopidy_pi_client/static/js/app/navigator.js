@@ -1,4 +1,4 @@
-define(["app/logger", "app/local-album-data", "app/album-category-decorator", "app/album-list-screen", "app/album-info-screen"], function(logger, localAlbumData, albumCategoryDecorator, albumListScreen, albumInfoScreen) {
+define(["app/logger", "app/local-album-data", "app/album-category-decorator", "app/album-list-screen", "app/album-info-screen", "app/online-album-decorator"], function(logger, localAlbumData, albumCategoryDecorator, albumListScreen, albumInfoScreen, onlineAlbumDecorator) {
     logger.log("In navigator.js")
     var navigator = {
         showOfflineScreen: function() {
@@ -14,12 +14,13 @@ define(["app/logger", "app/local-album-data", "app/album-category-decorator", "a
         showAlbumListScreen: function() {
             logger.log("About to send the user to the album list screen");
             localAlbumData.getAlbumList()
+                .then(onlineAlbumDecorator.insertOnlineAlbums)
                 .then(albumCategoryDecorator.decorateByArtist)
                 .done(albumListScreen.render);
         },
-        showAlbumInfoScreen: function(albumUri) {
-            logger.log("About to send the user to the album info screen, with URI", albumUri);
-            localAlbumData.getAlbumInfo(albumUri)
+        showAlbumInfoScreen: function(album) {
+            logger.log("About to send the user to the album info screen, with album", album);
+            localAlbumData.getAlbumInfo(album)
                 .done(albumInfoScreen.render);
         }
     };

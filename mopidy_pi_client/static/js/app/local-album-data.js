@@ -19,10 +19,11 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/local-album-mapper"
                 return Mopidy.when(albumList);
             }
         },
-        getAlbumInfo: function(albumUri) {
-            return localAlbumData._lookupAlbumUris([albumUri])
+        getAlbumInfo: function(album) {
+            return localAlbumData._lookupAlbumUris([album.uri])
                 .then(function(albums) {
-                    return albums[albumUri]
+                    album.tracks = albums[album.uri];
+                    return album;
                 });
         },
         _getAlbumUris: function() {

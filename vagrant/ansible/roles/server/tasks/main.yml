@@ -3,22 +3,10 @@
   become: yes
   apt_key: id=68576280 keyserver=keyserver.ubuntu.com state=present
 
-- name: Add the mopidy key for their repo
-  become: yes
-  apt_key: url=https://apt.mopidy.com/mopidy.gpg state=present
-
 - name: Add nodejs repo
   become: yes
   apt_repository: repo="deb https://deb.nodesource.com/node_9.x xenial main" state=present
 
-- name: Add mopidy repo
-  become: yes
-  apt_repository: repo="deb http://apt.mopidy.com/ stretch main contrib non-free" state=present
-
-- name: Add mopidy src repo
-  become: yes
-  apt_repository: repo="deb-src http://apt.mopidy.com/ stretch main contrib non-free" state=present
-  
 - name: Update apt
   become: yes
   apt: update_cache=yes
