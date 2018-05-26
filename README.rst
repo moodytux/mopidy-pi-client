@@ -84,8 +84,8 @@ To develop on mopidy-pi-client, there is a ready made Vagrantfile and Ansible pl
     cd <repo_path>/vagrant
     vagrant ssh
     sudo su - mopidy
-    cd /mopidy-pi-client
-    qunit
+    cd /mopidy-pi-client/test
+    mocha *
 
 
 Project resources
