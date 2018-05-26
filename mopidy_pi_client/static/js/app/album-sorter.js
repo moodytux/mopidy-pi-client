@@ -11,52 +11,86 @@ define(["app/logger"], function(logger) {
         byGenre: function(left, right) {
             logger.log("Sorting album data by genre");
 
-            if ((typeof(left.genre) === "undefined") && (typeof(right.genre) === "undefined")) {
+            var result;
+            if ((left == null) && (right == null)) {
                 result = albumSorter.SortOrder.SAME;
-            } else if (typeof(left.genre) === "undefined") {
+            } else if (left == null) {
                 result = albumSorter.SortOrder.RIGHT_FIRST;
-            } else if (typeof(right.genre) === "undefined") {
+            } else if (right == null) {
                 result = albumSorter.SortOrder.LEFT_FIRST;
             } else {
-                var leftName = left.genre.toLowerCase();
-                var rightName = right.genre.toLowerCase();
-
-                var result;
-                if (leftName < rightName) {
-                    result = albumSorter.SortOrder.LEFT_FIRST;
-                } else if (leftName > rightName) {
-                    result = albumSorter.SortOrder.RIGHT_FIRST;
-                } else {
-                    result = albumSorter.SortOrder.SAME;
-                }
+                result = albumSorter._byGenrePrimaryGenreSort(left, right);
             }
 
             return result;
         },
+        _byGenrePrimaryGenreSort: function(left, right) {
+            var leftName = left.genre.toLowerCase();
+            var rightName = right.genre.toLowerCase();
 
+            var result;
+            if (leftName < rightName) {
+                result = albumSorter.SortOrder.LEFT_FIRST;
+            } else if (leftName > rightName) {
+                result = albumSorter.SortOrder.RIGHT_FIRST;
+            } else {
+                result = albumSorter.byArtist(left, right);
+            }
+            return result;
+        },
         byArtist: function(left, right) {
             logger.log("Sorting album data by artist");
 
-            if ((typeof(left.artist) === "undefined") && (typeof(right.artist) === "undefined")) {
+            var result;
+            if ((left == null) && (right == null)) {
                 result = albumSorter.SortOrder.SAME;
-            } else if (typeof(left.artist) === "undefined") {
+            } else if (left == null) {
                 result = albumSorter.SortOrder.RIGHT_FIRST;
-            } else if (typeof(right.artist) === "undefined") {
+            } else if (right == null) {
                 result = albumSorter.SortOrder.LEFT_FIRST;
             } else {
-                var leftName = left.artist.toLowerCase();
-                var rightName = right.artist.toLowerCase();
-
-                var result;
-                if (leftName < rightName) {
-                    result = albumSorter.SortOrder.LEFT_FIRST;
-                } else if (leftName > rightName) {
-                    result = albumSorter.SortOrder.RIGHT_FIRST;
-                } else {
-                    result = albumSorter.SortOrder.SAME;
-                }
+                result = albumSorter._byArtistPrimaryArtistSort(left, right);
             }
 
+            return result;
+        },
+        _byArtistPrimaryArtistSort: function(left, right) {
+            var leftArtist = left.artist.toLowerCase();
+            var rightArtist = right.artist.toLowerCase();
+
+            var result;
+            if (leftArtist < rightArtist) {
+                result = albumSorter.SortOrder.LEFT_FIRST;
+            } else if (leftArtist > rightArtist) {
+                result = albumSorter.SortOrder.RIGHT_FIRST;
+            } else {
+                result = albumSorter._byArtistSecondaryIsLocalSort(left, right);
+            }
+            return result;
+        },
+        _byArtistSecondaryIsLocalSort: function(left, right) {
+            var result;
+            if (!left.isLocal && right.isLocal) {
+                result = albumSorter.SortOrder.LEFT_FIRST;
+            } else if (left.isLocal && !right.isLocal) {
+                result = albumSorter.SortOrder.RIGHT_FIRST;
+            } else {
+                result = albumSorter._byArtistTertiaryTitleSort(left, right);
+            }
+            return result;
+        },
+        _byArtistTertiaryTitleSort: function(left, right) {
+            var leftTitle = left.title.toLowerCase();
+            var rightTitle = right.title.toLowerCase();
+
+            var result;
+            if (leftTitle < rightTitle) {
+                result = albumSorter.SortOrder.LEFT_FIRST;
+            } else if (leftTitle > rightTitle) {
+                result = albumSorter.SortOrder.RIGHT_FIRST;
+            } else {
+                result = albumSorter.SortOrder.SAME;
+            }
             return result;
         }
     };

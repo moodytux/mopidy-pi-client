@@ -23,93 +23,127 @@ describe('album-sorter.js', function() {
     after(function() {
         squire.clean();
     });
+    describe('byArtist', function() {
+        it('when no albums are provided, they should be reported as the same', function() {
+            assertSame(albumSorter.byArtist, null, null);
+        });
+        it('when the first album is provided, this comes first', function() {
+            assertLeftFirst(albumSorter.byArtist, {
+                artist: "U2"
+            }, null);
+        });
+        it('when the second album is provided, this comes first', function() {
+            assertRightFirst(albumSorter.byArtist, null, {
+                artist: "Ash"
+            });
+        });
+        it('when two albums are provided, out of artist order, order is reversed', function() {
+            assertRightFirst(albumSorter.byArtist, {
+                artist: "U2"
+            }, {
+                artist: "Ash"
+            });
+        });
+        it('when two albums are provided, artist ordered, order is maintained', function() {
+            assertLeftFirst(albumSorter.byArtist, {
+                artist: "Ash"
+            }, {
+                artist: "u2"
+            });
+        });
+        it('when two albums are provided, artist same but isLocal unordered, order is reversed', function() {
+            assertRightFirst(albumSorter.byArtist, {
+                artist: "U2",
+                isLocal: true
+            }, {
+                artist: "u2",
+                isLocal: false
+            });
+        });
+        it('when two albums are provided, artist same and isLocal ordered, order is maintained', function() {
+            assertLeftFirst(albumSorter.byArtist, {
+                artist: "U2",
+                isLocal: false
+            }, {
+                artist: "u2",
+                isLocal: true
+            });
+        });
+        it('when two albums are provided, artist same and isLocal same but title unordered, order is reversed', function() {
+            assertRightFirst(albumSorter.byArtist, {
+                artist: "U2",
+                isLocal: true,
+                title: "the best of 1990-2000"
+            }, {
+                artist: "u2",
+                isLocal: true,
+                title: "The Best of 1980-1990"
+            });
+        });
+        it('when two albums are provided, artist same and isLocal same and title ordered, order is maintained', function() {
+            assertLeftFirst(albumSorter.byArtist, {
+                artist: "U2",
+                isLocal: true,
+                title: "The Best of 1980-1990"
+            }, {
+                artist: "u2",
+                isLocal: true,
+                title: "the Best of 1990-2000"
+            });
+        });
+        it('when two albums are provided, artist same and isLocal same and title same, we report they are the same', function() {
+            assertSame(albumSorter.byArtist, {
+                artist: "U2",
+                isLocal: true,
+                title: "The best of 1990-2000"
+            }, {
+                artist: "u2",
+                isLocal: true,
+                title: "The Best of 1990-2000"
+            });
+        });
+    });
     describe('byGenre', function() {
-        it('when two tracks are provided, out of genre order, order is reversed', function() {
+        it('when no albums are provided, they should be reported as the same', function() {
+            assertSame(albumSorter.byGenre, null, null);
+        });
+        it('when the first album is provided, this comes first', function() {
+            assertLeftFirst(albumSorter.byGenre, {
+                genre: "Rave"
+            }, null);
+        });
+        it('when the second album is provided, this comes first', function() {
+            assertRightFirst(albumSorter.byGenre, null, {
+                genre: "Rave"
+            });
+        });
+        it('when two albums are provided, genre unordered, order is reversed', function() {
             assertRightFirst(albumSorter.byGenre, {
                 genre: "Rock"
             }, {
                 genre: "Indie"
             });
         });
-        it('when two tracks are provided, genre in order, order is maintained', function() {
+        it('when two albums are provided, genre ordered, order is maintained', function() {
             assertLeftFirst(albumSorter.byGenre, {
                 genre: "Rave"
             }, {
                 genre: "Rock"
             });
         });
-        it('when two tracks are provided with the same genre, we report they are the same', function() {
-            assertSame(albumSorter.byGenre, {
+        it('when two albums are provided, genre same we should see a call to order by artist', squire.run(['app/album-sorter'], function(newAlbumSorter) {
+            newAlbumSorter.byArtist = td.function('.byArtist');
+            var left = {
                 genre: "Rave"
-            }, {
+            };
+            var right = {
                 genre: "RAVE"
-            });
-        });
-        it('when the first track is provided, this comes first', function() {
-            assertLeftFirst(albumSorter.byGenre, {
-                genre: "Rave"
-            }, {
-                genre: undefined
-            });
-        });
-        it('when the second track is provided, this comes first', function() {
-            assertRightFirst(albumSorter.byGenre, {
-                genre: undefined
-            }, {
-                genre: "Rave"
-            });
-        });
-        it('when no tracks are provided, they should be reported as the same', function() {
-            assertSame(albumSorter.byGenre, {
-                genre: undefined
-            }, {
-                genre: undefined
-            });
-        });
-    });
-    describe('byArtist', function() {
-        it('when two tracks are provided, out of artist order, order is reversed', function() {
-            assertRightFirst(albumSorter.byArtist, {
-                artist: "U2"
-            }, {
-                artist: "Ash"
-            });
-        });
-        it('when two tracks are provided, artist in order, order is maintained', function() {
-            assertLeftFirst(albumSorter.byArtist, {
-                artist: "Ash"
-            }, {
-                artist: "U2"
-            });
-        });
-        it('when two tracks are provided with the same artist, we report they are the same', function() {
-            assertSame(albumSorter.byArtist, {
-                artist: "U2"
-            }, {
-                artist: "u2"
-            });
-        });
-        it('when the first track is provided, this comes first', function() {
-            assertLeftFirst(albumSorter.byArtist, {
-                artist: "U2"
-            }, {
-                artist: undefined
-            });
-        });
-        it('when the second track is provided, this comes first', function() {
-            assertRightFirst(albumSorter.byArtist, {
-                artist: undefined
-            }, {
-                artist: "Ash"
-            });
-        });
-        it('when no tracks are provided, they should be reported as the same', function() {
-            assertSame(albumSorter.byArtist, {
-                artist: undefined
-            }, {
-                artist: undefined
-            });
-        });
+            };
+
+            newAlbumSorter.byGenre(left, right);
+
+            td.verify(newAlbumSorter.byArtist(left, right));
+        }));
     });
 
     var assertSame = function(algorithm, left, right) {

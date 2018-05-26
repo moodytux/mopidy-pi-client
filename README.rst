@@ -28,6 +28,11 @@ Screenshots
 Installation
 ============
 
+Make sure Mopidy is installed, and if you wish to use Spotify Premium then
+install mopidy-spotify too::
+
+    sudo apt-get install mopidy mopidy-spotify
+
 Currently, this plugin in is development so you will need to clone this repo and run::
 
     sudo pip install -e mopidy-pi-client
