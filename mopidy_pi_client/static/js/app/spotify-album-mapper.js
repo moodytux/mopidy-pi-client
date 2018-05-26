@@ -5,7 +5,7 @@ define(["app/logger"], function(logger) {
         mapSearchResultToAlbumArray: function(searchResult, requiredArtist) {
             var requiredArtistUri = spotifyAlbumMapper._findArtistUriWithExactMatch(searchResult.artists, requiredArtist);
             var albumModels = spotifyAlbumMapper._findAlbumsWithArtistUri(searchResult.albums, requiredArtistUri);
-            return spotifyAlbumMapper._mapAlbumModelToAlbum(albumModels);
+            return spotifyAlbumMapper._mapAlbumModelToAlbum(albumModels, requiredArtist);
         },
         _findArtistUriWithExactMatch: function(artistsArray, requiredArtist) {
             if (artistsArray != null) {
@@ -21,12 +21,12 @@ define(["app/logger"], function(logger) {
             }
             return [];
         },
-        _mapAlbumModelToAlbum: function(albumModelArray) {
+        _mapAlbumModelToAlbum: function(albumModelArray, requiredArtist) {
             if (albumModelArray != null) {
                 return albumModelArray.map(albumModel => {
                     return {
                         name: albumModel.name,
-                        artist: albumModel.artists[0].name,
+                        artist: requiredArtist,
                         image: '/pi-client/images/spotify.png',
                         genre: '',
                         uri: albumModel.uri,

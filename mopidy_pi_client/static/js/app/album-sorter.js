@@ -80,8 +80,8 @@ define(["app/logger"], function(logger) {
             return result;
         },
         _byArtistTertiaryTitleSort: function(left, right) {
-            var leftTitle = left.title.toLowerCase();
-            var rightTitle = right.title.toLowerCase();
+            var leftTitle = left.name.toLowerCase();
+            var rightTitle = right.name.toLowerCase();
 
             var result;
             if (leftTitle < rightTitle) {

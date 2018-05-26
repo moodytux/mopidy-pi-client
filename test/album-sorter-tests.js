@@ -73,33 +73,33 @@ describe('album-sorter.js', function() {
             assertRightFirst(albumSorter.byArtist, {
                 artist: "U2",
                 isLocal: true,
-                title: "the best of 1990-2000"
+                name: "the best of 1990-2000"
             }, {
                 artist: "u2",
                 isLocal: true,
-                title: "The Best of 1980-1990"
+                name: "The Best of 1980-1990"
             });
         });
         it('when two albums are provided, artist same and isLocal same and title ordered, order is maintained', function() {
             assertLeftFirst(albumSorter.byArtist, {
                 artist: "U2",
                 isLocal: true,
-                title: "The Best of 1980-1990"
+                name: "The Best of 1980-1990"
             }, {
                 artist: "u2",
                 isLocal: true,
-                title: "the Best of 1990-2000"
+                name: "the Best of 1990-2000"
             });
         });
         it('when two albums are provided, artist same and isLocal same and title same, we report they are the same', function() {
             assertSame(albumSorter.byArtist, {
                 artist: "U2",
                 isLocal: true,
-                title: "The best of 1990-2000"
+                name: "The best of 1990-2000"
             }, {
                 artist: "u2",
                 isLocal: true,
-                title: "The Best of 1990-2000"
+                name: "The Best of 1990-2000"
             });
         });
     });

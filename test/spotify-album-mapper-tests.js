@@ -33,6 +33,17 @@ describe('spotify-album-mapper.js', function() {
                 uri: 'ash-backers-uri'
             }]
         };
+        ashNuclearSoundsAlbumModel = {
+            name: 'Nu-Clear Sounds',
+            uri: 'nuclear-sounds-album-uri',
+            artists: [{
+                name: 'Ash Backers',
+                uri: 'ash-backers-uri'
+            }, {
+                name: 'Ash',
+                uri: 'ash-uri'
+            }]
+        };
         u2AlbumModel = {
             name: 'The Best of 1990-2000',
             uri: 'bestofu2-album-uri',
@@ -152,10 +163,10 @@ describe('spotify-album-mapper.js', function() {
                 uri: 'trailer-album-uri',
                 isLocal: false
             }];
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray), expectedArray);
+            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
         });
         it('when have two albums in model array, return them mapped in an array', function() {
-            var albumModelArray = [ashTrailerAlbumModel, u2AlbumModel];
+            var albumModelArray = [ashTrailerAlbumModel, ash1977AlbumModel];
             var expectedArray = [{
                 name: 'Trailer',
                 artist: 'Ash',
@@ -164,14 +175,26 @@ describe('spotify-album-mapper.js', function() {
                 uri: 'trailer-album-uri',
                 isLocal: false
             },{
-                name: 'The Best of 1990-2000',
-                artist: 'U2',
+                name: '1977',
+                artist: 'Ash',
                 image: '/pi-client/images/spotify.png',
                 genre: '',
-                uri: 'bestofu2-album-uri',
+                uri: '1977-album-uri',
                 isLocal: false
             }];
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray), expectedArray);
+            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
+        });
+        it('when have an album in model array with two artists, and required artist is second, return them mapped with required artist', function() {
+            var albumModelArray = [ashNuclearSoundsAlbumModel];
+            var expectedArray = [{
+                name: 'Nu-Clear Sounds',
+                artist: 'Ash',
+                image: '/pi-client/images/spotify.png',
+                genre: '',
+                uri: 'nuclear-sounds-album-uri',
+                isLocal: false
+            }];
+            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
         });
     });
 });
