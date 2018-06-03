@@ -6,15 +6,8 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
         insertOnlineAlbums: function(albumList) {
             // If we need to, fetch the online album list.
             if (typeof albumListIncludingOnline === 'undefined') {
-                // Get the albums by artist.
-                var albumsByArtist = onlineAlbumDecorator._getAlbumsByArtists(albumList);
-
-                // Get a list of artists, excluding various artists.
-                var artists = Object.keys(albumsByArtist).filter(item => item !== "Various Artists");
-
-                // Go through each artist and get an online album for it. Create an aggregating promise which
-                // appends the albums to the album array.
-                return Mopidy.when.all(artists.map(artist => onlineAlbumDecorator._getOnlineAlbumForArtist(artist, albumsByArtist)))
+                // Get the online album list and appends them to the album array, and store.
+                return onlineAlbumDecorator._getOnlineAlbums(albumList)
                     .then(function(onlineAlbumList) {
                         albumListIncludingOnline = albumList.concat(onlineAlbumList);
                         return albumListIncludingOnline;
@@ -46,7 +39,9 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
                 return onlineAlbums;
             } else {
                 return onlineAlbums.filter(onlineAlbum =>
-                    !localAlbumsByArtist[onlineAlbum.artist].map(localAlbum => localAlbum.name).includes(onlineAlbum.name))
+                    !localAlbumsByArtist[onlineAlbum.artist].map(localAlbum => localAlbum.name)
+                    .includes(onlineAlbum.name)
+                );
             }
         },
         _pickRandomAlbum: function(albums) {
@@ -63,6 +58,22 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
                 .then(searchResults => spotifyAlbumMapper.mapSearchResultToAlbumArray(searchResults[0], artist))
                 .then(onlineAlbums => onlineAlbumDecorator._filterDuplicateLocalAlbums(onlineAlbums, localAlbumsByArtist))
                 .then(onlineAlbumDecorator._pickRandomAlbum);
+        },
+        _getOnlineAlbums: function(albumList) {
+            // Get the albums by artist.
+            var albumsByArtist = onlineAlbumDecorator._getAlbumsByArtists(albumList);
+
+            // Get a list of artists, excluding various artists.
+            var artists = Object.keys(albumsByArtist).filter(item => item !== "Various Artists");
+
+            // Get the online albums for each artist we have locally.
+            var onlineAlbums = artists.map(artist => onlineAlbumDecorator._getOnlineAlbumForArtist(artist, albumsByArtist));
+
+            // Create an aggregating promise of retrieving all of the online albums.
+            return Mopidy.when.all(onlineAlbums)
+                .then(function(onlineAlbums) {
+                    return onlineAlbums.filter(onlineAlbum => onlineAlbum);
+                });
         }
     };
 
