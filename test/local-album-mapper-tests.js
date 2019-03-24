@@ -145,7 +145,8 @@ describe('local-album-mapper.js', function() {
                 image: albumImage,
                 genre: albumGenre,
                 uri: albumUri,
-                isLocal: true
+                isLocal: true,
+                providerIconUrl: ''
             };
 
             assert.deepEqual(localAlbumMapper._map(tracks), expectedAlbum);

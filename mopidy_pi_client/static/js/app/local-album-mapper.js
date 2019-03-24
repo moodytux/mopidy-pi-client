@@ -47,7 +47,8 @@ define(["app/logger", "app/word-helper"], function(logger, wordHelper) {
                 image: trackAlbum.images[0],
                 genre: trackArray[0].genre,
                 uri: trackAlbum.uri,
-                isLocal: true
+                isLocal: true,
+                providerIconUrl: ''
             };
         },
         _normaliseGenre: function(album) {

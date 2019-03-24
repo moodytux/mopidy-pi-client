@@ -70,6 +70,15 @@ section#album-and-category-list .cover {
   background-size: contain;
 }
 
+section#album-and-category-list .cover .provider-icon {
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  height: 100%;
+  background-size: 20%;
+  margin-right: 10px;
+  margin-top: -10px;
+}
+
 section#album-and-category-list .categoryflow-container {
   margin-top: 20px;
   height: 100px;

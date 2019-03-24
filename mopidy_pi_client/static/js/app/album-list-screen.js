@@ -28,7 +28,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
             // Add the album covers to coverflow.
             if (albums != null) {
                 albums.forEach(function(album, index) {
-                    $("<div/>")
+                    var cover = $("<div/>")
                         .css("background-image", "url(" + album.image + ")")
                         .addClass("cover disable-select")
                         .attr("data-piclient-album-category-index", album.category.index)
@@ -38,6 +38,13 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                             }
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));
+
+                    if (!album.isLocal) {
+                        $("<div/>")
+                            .addClass("provider-icon")
+                            .css("background-image", "url(" + album.providerIconUrl + ")")
+                            .appendTo(cover);
+                    }
                 });
             }
 

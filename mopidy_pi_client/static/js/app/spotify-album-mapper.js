@@ -1,11 +1,12 @@
-define(["app/logger"], function(logger) {
+define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidyContainer, Mopidy) {
     logger.log("In spotify-album-mapper.js")
+    var mopidy = mopidyContainer.getInstance();
 
     var spotifyAlbumMapper = {
         mapSearchResultToAlbumArray: function(searchResult, requiredArtist) {
             var requiredArtistUri = spotifyAlbumMapper._findArtistUriWithExactMatch(searchResult.artists, requiredArtist);
             var albumModels = spotifyAlbumMapper._findAlbumsWithArtistUri(searchResult.albums, requiredArtistUri);
-            return spotifyAlbumMapper._mapAlbumModelToAlbum(albumModels, requiredArtist);
+            return spotifyAlbumMapper._mapAlbumModelsToAlbums(albumModels, requiredArtist);
         },
         _findArtistUriWithExactMatch: function(artistsArray, requiredArtist) {
             if (artistsArray != null) {
@@ -21,20 +22,34 @@ define(["app/logger"], function(logger) {
             }
             return [];
         },
-        _mapAlbumModelToAlbum: function(albumModelArray, requiredArtist) {
+        _mapAlbumModelsToAlbums: function(albumModelArray, requiredArtist) {
             if (albumModelArray != null) {
-                return albumModelArray.map(albumModel => {
-                    return {
-                        name: albumModel.name,
-                        artist: requiredArtist,
-                        image: '/pi-client/images/spotify.png',
-                        genre: '',
-                        uri: albumModel.uri,
-                        isLocal: false
-                    };
-                });
+                return Mopidy.when.all(
+                    albumModelArray.map(
+                        albumModel => spotifyAlbumMapper._mapAlbumModelToAlbum(albumModel, requiredArtist)
+                    )
+                );
             }
             return [];
+        },
+        _mapAlbumModelToAlbum: function(albumModel, requiredArtist) {
+            var newAlbumModel = {
+                name: albumModel.name,
+                artist: requiredArtist,
+                image: '/pi-client/images/spotify-noimage.png',
+                genre: '',
+                uri: albumModel.uri,
+                isLocal: false,
+                providerIconUrl: '/pi-client/images/spotify-icon.png'
+            };
+            return mopidy.library.getImages([albumModel.uri])
+                .then(imageUris => {
+                    if (imageUris && imageUris[albumModel.uri] &&
+                        imageUris[albumModel.uri][0] && imageUris[albumModel.uri][0].uri) {
+                        newAlbumModel.image = imageUris[albumModel.uri][0].uri;
+                    }
+                    return newAlbumModel;
+                });
         }
     };
 

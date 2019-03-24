@@ -8,6 +8,7 @@ describe('online-album-decorator.js', function() {
     var mockMopidy;
     var mockMopidyContainer;
     var mockLogger;
+    var mockSpotifyMapper;
     var onlineAlbumDecorator;
     var albums;
     before(function(done) {
@@ -41,6 +42,9 @@ describe('online-album-decorator.js', function() {
             return mockMopidy;
         };
         squire.mock('app/mopidy-container', mockMopidyContainer);
+
+        mockSpotifyMapper = {};
+        squire.mock('app/spotify-album-mapper', mockSpotifyMapper);
 
         mockLogger = {};
         mockLogger.log = td.function('.log');

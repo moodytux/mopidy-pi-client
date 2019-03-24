@@ -6,10 +6,14 @@ var assert = helper.assert;
 
 describe('spotify-album-mapper.js', function() {
     var mocklogger;
+    var mockMopidy;
+    var mockMopidyInstance;
+    var mockMopidyInstanceContainer;
     var spotifyAlbumMapper;
     var ashTrailerAlbumModel;
     var ash1977AlbumModel;
     var u2AlbumModel;
+    var spotifyIconUrl = "/pi-client/images/spotify-icon.png";
     before(function(done) {
         ashTrailerAlbumModel = {
             name: 'Trailer',
@@ -59,6 +63,19 @@ describe('spotify-album-mapper.js', function() {
         mocklogger = {};
         mocklogger.log = td.function('.log');
         squire.mock('app/logger', mocklogger);
+
+        mockMopidy = {};
+        squire.mock('mopidy', mockMopidy);
+
+        mockMopidyInstance = {
+            library: {}
+        };
+        mockMopidyInstance.library.getImages = td.function(".getImages");
+        mockMopidyInstanceContainer = {}
+        mockMopidyInstanceContainer.getInstance = function() {
+            return mockMopidyInstance;
+        };
+        squire.mock('app/mopidy-container', mockMopidyInstanceContainer);
 
         squire.require(['app/spotify-album-mapper'], function(spotifyAlbumMapperIn) {
             spotifyAlbumMapper = spotifyAlbumMapperIn;
@@ -146,55 +163,87 @@ describe('spotify-album-mapper.js', function() {
             assert.deepEqual(spotifyAlbumMapper._findAlbumsWithArtistUri(albumsModels, "ash-uri"), [ashTrailerAlbumModel, ash1977AlbumModel]);
         });
     });
-    describe('_mapAlbumModelToAlbum', function() {
+    describe('_mapAlbumModelsToAlbums', function() {
         it('when no album model array is given, return empty array', function() {
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(null), []);
+            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelsToAlbums(null), []);
         });
-        it('when empty album model array is given, return empty array', function() {
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum([]), []);
-        });
-        it('when have one album in model array, return mapped version in an array', function() {
-            var albumModelArray = [ashTrailerAlbumModel];
-            var expectedArray = [{
+    });
+    describe('_mapAlbumModelToAlbum', function() {
+        it('when have an album, return mapped version', function(done) {
+            var expectedImageUri = 'trailer-album-image-uri';
+            td.when(mockMopidyInstance.library.getImages([ashTrailerAlbumModel.uri])).thenReturn(
+                helper.mockPromise({
+                    'trailer-album-uri': [{
+                        uri: expectedImageUri
+                    }]
+                })
+            );
+
+            var expectedAlbum = {
                 name: 'Trailer',
                 artist: 'Ash',
-                image: '/pi-client/images/spotify.png',
+                image: expectedImageUri,
                 genre: '',
                 uri: 'trailer-album-uri',
-                isLocal: false
-            }];
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
+                isLocal: false,
+                providerIconUrl: spotifyIconUrl
+            };
+
+            spotifyAlbumMapper._mapAlbumModelToAlbum(ashTrailerAlbumModel, 'Ash')
+                .done((result) => {
+                    assert.deepEqual(result, expectedAlbum);
+                })
+                .finally(done);
         });
-        it('when have two albums in model array, return them mapped in an array', function() {
-            var albumModelArray = [ashTrailerAlbumModel, ash1977AlbumModel];
-            var expectedArray = [{
+        it('when have an album, but no image is available, return mapped version with default image', function(done) {
+            var expectedImageUri = '/pi-client/images/spotify-noimage.png';
+            td.when(mockMopidyInstance.library.getImages([ashTrailerAlbumModel.uri])).thenReturn(
+                helper.mockPromise({
+                    'trailer-album-uri': []
+                })
+            );
+
+            var expectedAlbum = {
                 name: 'Trailer',
                 artist: 'Ash',
-                image: '/pi-client/images/spotify.png',
+                image: expectedImageUri,
                 genre: '',
                 uri: 'trailer-album-uri',
-                isLocal: false
-            },{
-                name: '1977',
-                artist: 'Ash',
-                image: '/pi-client/images/spotify.png',
-                genre: '',
-                uri: '1977-album-uri',
-                isLocal: false
-            }];
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
+                isLocal: false,
+                providerIconUrl: spotifyIconUrl
+            };
+
+            spotifyAlbumMapper._mapAlbumModelToAlbum(ashTrailerAlbumModel, 'Ash')
+                .done((result) => {
+                    assert.deepEqual(result, expectedAlbum);
+                })
+                .finally(done);
         });
-        it('when have an album in model array with two artists, and required artist is second, return them mapped with required artist', function() {
-            var albumModelArray = [ashNuclearSoundsAlbumModel];
-            var expectedArray = [{
+        it('when have an album with two artists, and required artist is second, return them mapped with required artist', function(done) {
+            var expectedNuclearSoundsImageUri = 'nuclear-sounds-album-image-uri';
+            td.when(mockMopidyInstance.library.getImages([ashNuclearSoundsAlbumModel.uri])).thenReturn(
+                helper.mockPromise({
+                    'nuclear-sounds-album-uri': [{
+                        uri: expectedNuclearSoundsImageUri
+                    }]
+                })
+            );
+
+            var expectedAlbum = {
                 name: 'Nu-Clear Sounds',
                 artist: 'Ash',
-                image: '/pi-client/images/spotify.png',
+                image: expectedNuclearSoundsImageUri,
                 genre: '',
                 uri: 'nuclear-sounds-album-uri',
-                isLocal: false
-            }];
-            assert.deepEqual(spotifyAlbumMapper._mapAlbumModelToAlbum(albumModelArray, 'Ash'), expectedArray);
+                isLocal: false,
+                providerIconUrl: spotifyIconUrl
+            };
+
+            spotifyAlbumMapper._mapAlbumModelToAlbum(ashNuclearSoundsAlbumModel, 'Ash')
+                .done((result) => {
+                    assert.deepEqual(result, expectedAlbum);
+                })
+                .finally(done);
         });
     });
 });
