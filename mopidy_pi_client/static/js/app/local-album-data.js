@@ -35,8 +35,12 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/local-album-mapper"
         _lookupAlbumUris: function(albumUris) {
             logger.log("About to lookup album URIs", albumUris);
 
-            // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
-            return mopidy.library.lookup(null, albumUris);
+            if (albumUris.length > 0) {
+                // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
+                return mopidy.library.lookup(null, albumUris);
+            } else {
+                return [];
+            }
         },
         _mapAlbumTrackArrayToAlbumArray: function(arrayOfAlbumTracks) {
             logger.log("Mapping array of album tracks to album array", arrayOfAlbumTracks);

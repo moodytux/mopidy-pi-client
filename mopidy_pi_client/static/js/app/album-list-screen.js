@@ -9,16 +9,22 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
         render: function(albums) {
             logger.log("About to render the following albums along with their categories", albums);
 
-            // Show our album list screen, hide other screens.
-            $(".screen").hide();
-            $("#album-and-category-list").show();
+            if (albums.length > 0) {
+                // Show our album list screen, hide other screens.
+                $(".screen").hide();
+                $("#album-and-category-list").show();
 
-            // Fill our coverflow if we haven't done so already.
-            if (!albumListScreen._initialisedCoverflow) {
-                albumListScreen._renderCoverList(albums);
-                albumListScreen._renderCategoryList(albums);
+                // Fill our coverflow if we haven't done so already.
+                if (!albumListScreen._initialisedCoverflow) {
+                    albumListScreen._renderCoverList(albums);
+                    albumListScreen._renderCategoryList(albums);
 
-                albumListScreen._initialisedCoverflow = true;
+                    albumListScreen._initialisedCoverflow = true;
+                }
+            } else {
+                // We have to albums to show, so show the offline screen, hide other screens.
+                $(".screen").hide();
+                $("#offline").show();
             }
         },
         _renderCoverList: function(albums) {
