@@ -45,7 +45,7 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         })
                         .appendTo($("#album-and-category-list div.coverflow"));
 
-                    if (!album.isLocal) {
+                    if (album.providerIconUrl != '') {
                         $("<div/>")
                             .addClass("provider-icon")
                             .css("background-image", "url(" + album.providerIconUrl + ")")

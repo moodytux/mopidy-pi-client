@@ -39,7 +39,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
 
                 // Set the album info.
                 $("#album-info .album-image").attr("src", album.image);
-                if (!album.isLocal) {
+                if (album.providerIconUrl != "") {
                     $("#album-info .provider-icon").attr("src", album.providerIconUrl);
                 }
                 $("#album-info .play-album-control").unbind("click").click(function() {

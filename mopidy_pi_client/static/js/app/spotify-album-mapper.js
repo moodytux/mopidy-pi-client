@@ -40,13 +40,14 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
                 genre: '',
                 uri: albumModel.uri,
                 isLocal: false,
-                providerIconUrl: '/pi-client/images/spotify-icon.png'
+                providerIconUrl: ''
             };
             return mopidy.library.getImages([albumModel.uri])
                 .then(imageUris => {
                     if (imageUris && imageUris[albumModel.uri] &&
                         imageUris[albumModel.uri][0] && imageUris[albumModel.uri][0].uri) {
                         newAlbumModel.image = imageUris[albumModel.uri][0].uri;
+                        newAlbumModel.providerIconUrl = '/pi-client/images/spotify-icon.png';
                     }
                     return newAlbumModel;
                 });

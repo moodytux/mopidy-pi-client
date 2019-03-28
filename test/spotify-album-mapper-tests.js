@@ -195,7 +195,7 @@ describe('spotify-album-mapper.js', function() {
                 })
                 .finally(done);
         });
-        it('when have an album, but no image is available, return mapped version with default image', function(done) {
+        it('when have an album, but no image is available, return mapped version with default image and no provider', function(done) {
             var expectedImageUri = '/pi-client/images/spotify-noimage.png';
             td.when(mockMopidyInstance.library.getImages([ashTrailerAlbumModel.uri])).thenReturn(
                 helper.mockPromise({
@@ -210,7 +210,7 @@ describe('spotify-album-mapper.js', function() {
                 genre: '',
                 uri: 'trailer-album-uri',
                 isLocal: false,
-                providerIconUrl: spotifyIconUrl
+                providerIconUrl: ''
             };
 
             spotifyAlbumMapper._mapAlbumModelToAlbum(ashTrailerAlbumModel, 'Ash')
