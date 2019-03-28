@@ -109,22 +109,36 @@ section#album-info .row .track-list-col {
   padding-bottom: 20px;
 }
 
-section#album-info .album-image {
+section#album-info .album-image-area {
   position: relative;
   height: calc(100% - 64px);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  text-align: center;
 }
 
-section#album-info .album-image .play-album-control {
+section#album-info .album-image-area .album-image-container {
+  display: inline-block;
+  position: relative;
+  height: 100%;
+}
+
+section#album-info .album-image-area .album-image-container .album-image {
+  height: 100%;
+}
+
+section#album-info .album-image-area .album-image-container .provider-icon {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+}
+
+section#album-info .album-image-area .album-image-container .play-album-control {
   position: absolute;
   top: calc(50% - 55px);
   left: calc(50% - 55px);
   opacity: 0.5;
 }
 
-section#album-info .album-image .play-album-control .circle {
+section#album-info .album-image-area .album-image-container .play-album-control .circle {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -146,13 +160,13 @@ section#album-info .album-image .play-album-control .circle {
   }
 }
 
-section#album-info .album-image .play-album-control .circle.disappear {
+section#album-info .album-image-area .album-image-container .play-album-control .circle.disappear {
   animation-name: circle-shrink;
   animation-duration: 2s;
   animation-fill-mode: forwards;
 }
 
-section#album-info .album-image .play-album-control .icon {
+section#album-info .album-image-area .album-image-container .play-album-control .icon {
   position: absolute;
   top: 15px;
   left: 35px;

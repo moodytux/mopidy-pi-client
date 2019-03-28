@@ -17,8 +17,8 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
 
             // Reinitialise the info screen.
             $('#album-info .track-list').empty();
-            $("#album-info .album-image .play-album-control .icon").show();
-            $("#album-info .album-image .play-album-control .circle").removeClass("disappear");
+            $("#album-info .play-album-control .icon").show();
+            $("#album-info .play-album-control .circle").removeClass("disappear");
 
             var tracks = album.tracks;
             if (tracks && (tracks.length > 0)) {
@@ -38,11 +38,14 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                 });
 
                 // Set the album info.
-                $("#album-info .album-image").css("background-image", "url(" + album.image + ")");
-                $("#album-info .album-image .play-album-control").unbind("click").click(function() {
-                    $("#album-info .album-image .play-album-control .icon").fadeOut();
+                $("#album-info .album-image").attr("src", album.image);
+                if (!album.isLocal) {
+                    $("#album-info .provider-icon").attr("src", album.providerIconUrl);
+                }
+                $("#album-info .play-album-control").unbind("click").click(function() {
+                    $("#album-info .play-album-control .icon").fadeOut();
                     controls.playTracks(tracks, 0);
-                    $("#album-info .album-image .play-album-control .circle").addClass("disappear");
+                    $("#album-info .play-album-control .circle").addClass("disappear");
                 });
 
                 // Set the tracks and renderers so our state can update the view.
