@@ -51,6 +51,17 @@ Mopidy-Pi-Client to your Mopidy configuration file::
     [pi-client]
     enabled = true
 
+and to support Spotify Premium add::
+
+    [spotify]
+    enabled = true
+    bitrate = 320
+    username = <your_spotify_username>
+    password = <your_spotify_password>
+    client_id = <your_spotify_client_id>
+    client_secret = <your_spotify_secret>
+
+
 Load a web browser up and go to: http://<configured_ip>:<configured_port>/pi-client/html/
 
 
@@ -63,7 +74,6 @@ Feature roadmap
 - Selecting albums by genre
 - Provide a refresh button for refreshing album list
 - Providing track duration and elapsed time information
-- Integration with Deezer to find new music by the same artist
 
 
 Development
@@ -109,6 +119,7 @@ Changelog
 v0.3.0
 ----------------------------------------
 
+- Added support for Spotify Premium, where for each artist the first album added is one from Spotify not in the local album collection.
 - Added a progress bar on the current track to indicate elapsed playing time.
 - Code refactoring to have unit tested playback state.
 - Updating Ansible scripts to provide latest NodeJS for use with tests.

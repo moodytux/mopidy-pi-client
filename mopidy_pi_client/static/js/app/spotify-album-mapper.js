@@ -4,9 +4,13 @@ define(["app/logger", "app/mopidy-container", "mopidy"], function(logger, mopidy
 
     var spotifyAlbumMapper = {
         mapSearchResultToAlbumArray: function(searchResult, requiredArtist) {
-            var requiredArtistUri = spotifyAlbumMapper._findArtistUriWithExactMatch(searchResult.artists, requiredArtist);
-            var albumModels = spotifyAlbumMapper._findAlbumsWithArtistUri(searchResult.albums, requiredArtistUri);
-            return spotifyAlbumMapper._mapAlbumModelsToAlbums(albumModels, requiredArtist);
+            if (searchResult != null) {
+                var requiredArtistUri = spotifyAlbumMapper._findArtistUriWithExactMatch(searchResult.artists, requiredArtist);
+                var albumModels = spotifyAlbumMapper._findAlbumsWithArtistUri(searchResult.albums, requiredArtistUri);
+                return spotifyAlbumMapper._mapAlbumModelsToAlbums(albumModels, requiredArtist);
+            } else {
+                return [];
+            }
         },
         _findArtistUriWithExactMatch: function(artistsArray, requiredArtist) {
             if (artistsArray != null) {

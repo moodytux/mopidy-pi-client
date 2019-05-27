@@ -19,6 +19,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
             $('#album-info .track-list').empty();
             $("#album-info .play-album-control .icon").show();
             $("#album-info .play-album-control .circle").removeClass("disappear");
+            $("#album-info .provider-icon").attr("src", "");
 
             var tracks = album.tracks;
             if (tracks && (tracks.length > 0)) {
