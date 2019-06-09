@@ -13,11 +13,7 @@
 
 - name: Install system packages
   become: yes
-  apt: pkg={{ item }} state=latest
-  with_items:
-    - git
-    - python-software-properties
-    - python-pip
+  apt: name=git,python-software-properties,python-pip state=latest
 
 - name: Configure the timezone
   become: yes

@@ -1,10 +1,7 @@
 ---
 - name: Install mopidy and nodejs
   become: yes
-  apt: pkg={{ item }} state=latest
-  with_items:
-  - mopidy
-  - nodejs
+  apt: name=mopidy,nodejs state=latest
 
 - name: Give the mopidy user a shell
   become: yes
@@ -34,10 +31,7 @@
 - name: Install all required mopidy extensions
   become: yes
   become_user: mopidy
-  pip: name={{ item }}
-  with_items:
-  - Mopidy-Local-SQLite
-  - Mopidy-Local-Images
+  pip: name=Mopidy-Local-SQLite,Mopidy-Local-Images
 
 - name: Add the mopidy key for their repo
   become: yes
@@ -57,9 +51,7 @@
 
 - name: Install mopidy-spotify (doesnt work with pip above)
   become: yes
-  apt: pkg={{ item }} state=latest
-  with_items:
-    - mopidy-spotify
+  apt: name=mopidy-spotify state=latest
 
 - name: Remove mopidy repo
   become: yes
