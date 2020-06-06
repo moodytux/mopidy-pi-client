@@ -28,8 +28,8 @@ Screenshots
 Installation
 ============
 
-Make sure Mopidy is installed, and if you wish to use Spotify Premium then
-install mopidy-spotify too::
+Make sure Mopidy is installed and configured, along with Mopidy-Local, Mopidy-Local-Images, and Mopidy-Local-SQLite.
+If you wish to use Spotify Premium then install mopidy-spotify too::
 
     sudo apt-get install mopidy mopidy-spotify
 
@@ -115,6 +115,10 @@ Credits
 
 Changelog
 =========
+
+v0.4.0
+----------------------------------------
+- Added cursor changes during loading actions for user feedback
 
 v0.3.0
 ----------------------------------------
