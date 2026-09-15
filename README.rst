@@ -51,13 +51,15 @@ Mopidy-Pi-Client to your Mopidy configuration file::
     [pi-client]
     enabled = true
 
-and to support Spotify Premium add::
+and to support Spotify Premium, request a client_id/client_secret for the mopidy extension from here:
+
+    https://mopidy.com/ext/spotify/
+
+and add the block::
 
     [spotify]
     enabled = true
     bitrate = 320
-    username = <your_spotify_username>
-    password = <your_spotify_password>
     client_id = <your_spotify_client_id>
     client_secret = <your_spotify_secret>
 
@@ -115,6 +117,11 @@ Credits
 
 Changelog
 =========
+
+v0.5.0
+----------------------------------------
+- Update to support Mopidy version 3.4.2
+- Show the track's artist when an album has various artists
 
 v0.4.0
 ----------------------------------------

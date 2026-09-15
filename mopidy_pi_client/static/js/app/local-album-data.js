@@ -21,8 +21,8 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/local-album-mapper"
         },
         getAlbumInfo: function(album) {
             return localAlbumData._lookupAlbumUris([album.uri])
-                .then(function(albums) {
-                    album.tracks = albums[album.uri];
+                .then(function(dictOfAlbumTracksArrayAndAlbumImagesArray) {
+                    album.tracks = dictOfAlbumTracksArrayAndAlbumImagesArray['text_info'][album.uri];
                     return album;
                 });
         },
@@ -36,19 +36,27 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/local-album-mapper"
             logger.log("About to lookup album URIs", albumUris);
 
             if (albumUris.length > 0) {
-                // Request info on all the albums. Unfortunately the API only gives us access to album info through tracks :(
-                return mopidy.library.lookup(null, albumUris);
+                // Request info on all the albums then images. Unfortunately the API only gives us access to album info through tracks :(
+                return mopidy.library.lookup(albumUris)
+                    .then(function(albumTextInfo) {
+                        return mopidy.library.getImages(albumUris)
+                            .then(function(albumImages) {
+                                return {'text_info': albumTextInfo, 'images': albumImages};
+                            });
+                    });
             } else {
-                return [];
+                return {'text_info': [], 'images': []};
             }
         },
-        _mapAlbumTrackArrayToAlbumArray: function(arrayOfAlbumTracks) {
-            logger.log("Mapping array of album tracks to album array", arrayOfAlbumTracks);
+        _mapAlbumTrackArrayToAlbumArray: function(dictOfAlbumTracksArrayAndAlbumImagesArray) {
+            logger.log("Mapping array of album tracks and array of album images to album array", dictOfAlbumTracksArrayAndAlbumImagesArray);
+            var arrayOfAlbumTracks = dictOfAlbumTracksArrayAndAlbumImagesArray['text_info'];
+            var arrayOfAlbumImages = dictOfAlbumTracksArrayAndAlbumImagesArray['images'];
             var albumArray = [];
             if (arrayOfAlbumTracks) {
                 Object.entries(arrayOfAlbumTracks).forEach(
                     ([index, trackArray]) => {
-                        var album = localAlbumMapper.trackListToAlbum(trackArray);
+                        var album = localAlbumMapper.trackListToAlbum(trackArray, arrayOfAlbumImages[index]);
                         if (album !== null) {
                             albumArray.push(album);
                         }

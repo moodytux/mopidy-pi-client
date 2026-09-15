@@ -197,13 +197,39 @@ section#album-info .track-list .track .progress {
   z-index: 0;
 }
 
-section#album-info .track-list .track .title {
+section#album-info .track-list .track .track-info {
   position: relative;
+  display: flex;
   padding-left: 35px;
   padding-right: 15px;
   padding-top: 10px;
   padding-bottom: 10px;
   z-index: 1;
+}
+
+section#album-info .track-list .track .track-info .track-number {
+  width: 15px;
+  text-align: center;
+  margin-right: 10px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+section#album-info .track-list .track .track-info .track-info-column {
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+section#album-info .track-list .track .track-info .track-info-column .title {
+  padding-left: 0;
+  margin-bottom: 5px;
+  z-index: 1;
+}
+
+section#album-info .track-list .track .track-info .track-info-column .track-artist {
+  z-index: 1;
+  font-style: italic;
 }
 
 section#album-info .track-list .track .indicator.playing,
@@ -229,7 +255,7 @@ section#album-info .track-list .track .indicator.paused .indicator-shape {
   float: left;
   width: 8px;
   height: 9px;
-  margin-top: 6px;
+  margin-top: 7px;
   border-left: 3px solid #000;
   border-right: 3px solid #000;
 }

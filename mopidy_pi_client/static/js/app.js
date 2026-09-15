@@ -1,7 +1,7 @@
 // Default path already defined to be js dir
 requirejs.config({
     paths: {
-        "mopidy": "../../mopidy/mopidy",
+        "mopidy": "lib/mopidy-0.5.0",
         "jquery": "lib/jquery-2.2.4.min",
         "jquery-ui": "lib/jquery-ui-1.12.1.custom/jquery-ui.min",
         "jquery-mobile": "lib/jquery.mobile-1.4.5.min",

@@ -24,6 +24,18 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
             var tracks = album.tracks;
             if (tracks && (tracks.length > 0)) {
                 $.each(tracks, function(index, track) {
+                    // Create a vertical stack for title and artist
+                    var trackInfoColumn = $("<div/>")
+                        .addClass("track-info-column")
+                        .append("<div class='title'>" + track.name + "</div>")
+                        .append("<div class='track-artist' style='display: none;'>" + track.artists[0].name + "</div>");
+                    
+                    // Create a container for track info with proper layout
+                    var trackInfo = $("<div/>")
+                        .addClass("track-info")
+                        .append("<div class='track-number'>" + track.track_no + ". </div>")
+                        .append(trackInfoColumn);
+
                     $("<a/>")
                         .addClass("list-group-item")
                         .addClass("disable-select")
@@ -34,7 +46,7 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                         })
                         .append("<div class='progress'></div>")
                         .append("<div class='indicator'><div class='indicator-shape' /></div>")
-                        .append("<div class='title'>" + track.track_no + ". " + track.name + "</div>")
+                        .append(trackInfo)
                         .appendTo($('#album-info .track-list'));
                 });
 
@@ -48,6 +60,9 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
                     controls.playTracks(tracks, 0);
                     $("#album-info .play-album-control .circle").addClass("disappear");
                 });
+                
+                // Show track artists for various artists albums
+                albumInfoScreen._showTrackArtists(album);
 
                 // Set the tracks and renderers so our state can update the view.
                 playbackState.setTracks(tracks);
@@ -142,6 +157,13 @@ define(["jquery", "app/logger", "app/controls", "app/playback-state"], function(
             if (currentTrackDetails.elapsedTimeMs && currentTrackDetails.totalTimeMs) {
                 var progressDiv = (currentTrackDetails.elapsedTimeMs / currentTrackDetails.totalTimeMs) * 100;
                 $(".progress", currentTrackDiv).width(progressDiv + "%");
+            }
+        },
+        
+        // Helper function to show track artists for "Various artists" albums
+        _showTrackArtists: function(album) {
+            if (album && album.artist && album.artist.toLowerCase() === "various artists") {
+                $(".track .track-artist").show();
             }
         }
     };
