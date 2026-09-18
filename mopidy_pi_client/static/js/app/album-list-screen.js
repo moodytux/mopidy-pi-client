@@ -1,4 +1,4 @@
-define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverflowjs, bootstrap, logger) {
+define(["jquery", "coverflowjs", "bootstrap", "app/logger", "app/online-album-decorator"], function($, coverflowjs, bootstrap, logger, onlineAlbumDecorator) {
     logger.log("In album-list-screen.js")
     var albumListScreen = {
         _navigateToAlbumCallback: null,
@@ -49,6 +49,16 @@ define(["jquery", "coverflowjs", "bootstrap", "app/logger"], function($, coverfl
                         $("<div/>")
                             .addClass("provider-icon")
                             .css("background-image", "url(" + album.providerIconUrl + ")")
+                            .click(function(event) {
+                                // Don't go into the album click handler
+                                event.stopPropagation();
+
+                                // Fetch a new album we don't have
+                                onlineAlbumDecorator.populateAlbumPlaceholder(album).then(function(newAlbum) {
+                                    cover.css("background-image", "url(" + newAlbum.image + ")")
+                                    album = newAlbum;
+                                });
+                            })
                             .appendTo(cover);
                     }
                 });

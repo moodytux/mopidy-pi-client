@@ -19,7 +19,7 @@ define(["jquery", "app/logger", "app/local-album-data", "app/album-category-deco
             logger.log("About to send the user to the album list screen");
             navigator._showLoadingCursor();
             localAlbumData.getAlbumList()
-                .then(onlineAlbumDecorator.insertOnlineAlbums, navigator._hideLoadingCursor)
+                .then(onlineAlbumDecorator.insertOnlineAlbumPlaceholders, navigator._hideLoadingCursor)
                 .then(albumCategoryDecorator.decorateByArtist, navigator._hideLoadingCursor)
                 .then(albumListScreen.render, navigator._hideLoadingCursor)
                 .done(navigator._hideLoadingCursor);

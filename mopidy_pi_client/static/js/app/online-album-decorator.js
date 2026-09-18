@@ -3,11 +3,12 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
     var mopidy = mopidyContainer.getInstance();
 
     var onlineAlbumDecorator = {
-        insertOnlineAlbums: function(albumList) {
+        _albumsByArtist: [],
+        insertOnlineAlbumPlaceholders: function(albumList) {
             // If we need to, fetch the online album list.
             if (typeof albumListIncludingOnline === 'undefined') {
                 // Get the online album list and appends them to the album array, and store.
-                return onlineAlbumDecorator._getOnlineAlbums(albumList)
+                return onlineAlbumDecorator._getOnlineAlbumPlaceholders(albumList)
                     .then(function(onlineAlbumList) {
                         albumListIncludingOnline = albumList.concat(onlineAlbumList);
                         return albumListIncludingOnline;
@@ -16,6 +17,29 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
                 logger.log("Already got album list including online");
                 return Mopidy.when(albumListIncludingOnline);
             }
+        },
+        populateAlbumPlaceholder: function(album) {
+            // Lookup online albums, filtering out local duplicates, and pick one at random.
+            return onlineAlbumDecorator._searchSpotifyForArtist(album.artist)
+                .then(searchResults => spotifyAlbumMapper.mapSearchResultToAlbumArray(searchResults[0], album.artist))
+                .then(onlineAlbums => onlineAlbumDecorator._filterDuplicateLocalAlbums(onlineAlbums, _albumsByArtist))
+                .then(onlineAlbumDecorator._pickRandomAlbum);
+        },
+        _getOnlineAlbumPlaceholders: function(albumList) {
+            // Get the albums by artist.
+            _albumsByArtist = onlineAlbumDecorator._getAlbumsByArtists(albumList);
+
+            // Get a list of artists, excluding various artists.
+            var artists = Object.keys(_albumsByArtist).filter(item => item !== "Various Artists");
+
+            // Get the online album placeholder for each artist we have locally.
+            var onlineAlbums = artists.map(artist => onlineAlbumDecorator._getAlbumPlaceholder(artist));
+
+            // Create an aggregating promise of retrieving all of the online albums.
+            return Mopidy.when.all(onlineAlbums)
+                .then(function(onlineAlbums) {
+                    return onlineAlbums.filter(onlineAlbum => onlineAlbum);
+                });
         },
         _getAlbumsByArtists: function(albumList) {
             var albumsByArtist = {};
@@ -52,28 +76,16 @@ define(["mopidy", "app/logger", "app/mopidy-container", "app/spotify-album-mappe
                 return null;
             }
         },
-        _getOnlineAlbumForArtist: function(artist, localAlbumsByArtist) {
-            // Lookup online albums, filtering out local duplicates, and pick one at random.
-            return onlineAlbumDecorator._searchSpotifyForArtist(artist)
-                .then(searchResults => spotifyAlbumMapper.mapSearchResultToAlbumArray(searchResults[0], artist))
-                .then(onlineAlbums => onlineAlbumDecorator._filterDuplicateLocalAlbums(onlineAlbums, localAlbumsByArtist))
-                .then(onlineAlbumDecorator._pickRandomAlbum);
-        },
-        _getOnlineAlbums: function(albumList) {
-            // Get the albums by artist.
-            var albumsByArtist = onlineAlbumDecorator._getAlbumsByArtists(albumList);
-
-            // Get a list of artists, excluding various artists.
-            var artists = Object.keys(albumsByArtist).filter(item => item !== "Various Artists");
-
-            // Get the online albums for each artist we have locally.
-            var onlineAlbums = artists.map(artist => onlineAlbumDecorator._getOnlineAlbumForArtist(artist, albumsByArtist));
-
-            // Create an aggregating promise of retrieving all of the online albums.
-            return Mopidy.when.all(onlineAlbums)
-                .then(function(onlineAlbums) {
-                    return onlineAlbums.filter(onlineAlbum => onlineAlbum);
-                });
+        _getAlbumPlaceholder: function(artist) {
+            return {
+                name: '',
+                artist: artist,
+                image: '/pi-client/images/spotify-noimage.png',
+                genre: '',
+                uri: '',
+                isLocal: false,
+                providerIconUrl: '/pi-client/images/spotify-icon.png'
+            };
         }
     };
 
